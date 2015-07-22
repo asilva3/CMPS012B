@@ -1,0 +1,1814 @@
+Script started on Tue 05 Nov 2013 08:05:01 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind malloc
+==16526== Memcheck, a memory error detector
+==16526== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==16526== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==16526== Command: malloc
+==16526== 
+0x4c27090-> {6, (nil)}
+==16526== 
+==16526== HEAP SUMMARY:
+==16526==     in use at exit: 16 bytes in 1 blocks
+==16526==   total heap usage: 2 allocs, 1 frees, 32 bytes allocated
+==16526== 
+==16526== LEAK SUMMARY:
+==16526==    definitely lost: 16 bytes in 1 blocks
+==16526==    indirectly lost: 0 bytes in 0 blocks
+==16526==      possibly lost: 0 bytes in 0 blocks
+==16526==    still reachable: 0 bytes in 0 blocks
+==16526==         suppressed: 0 bytes in 0 blocks
+==16526== Rerun with --leak-check=full to see details of leaked memory
+==16526== 
+==16526== For counts of detected and suppressed errors, rerun with: -v
+==16526== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 6 from 6)
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ gdb malloc
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/malloc...done.
+(gdb) break main
+Breakpoint 1 at 0x400594: file malloc.c, line 13.
+(gdb) run
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/malloc 
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffe238) at malloc.c:13
+13	   node *ptr = malloc (sizeof (struct node));
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_64
+(gdb) print ptr
+$1 = (node *) 0x4004a0
+(gdb) print *ptr
+$2 = {value = -1991643855, link = 0x495450f0e48348e2}
+(gdb) next
+14	   ptr = malloc (sizeof (node));
+(gdb) next
+15	   ptr->value = 6;
+(gdb) next
+16	   ptr->link = NULL;
+(gdb) print ptr
+$3 = (node *) 0x601030
+(gdb) print *ptr
+$4 = {value = 6, link = 0x0}
+(gdb) next
+17	   printf ("%p-> {%d, %p}\n", ptr, ptr->value, ptr->link);
+(gdb) next
+0x601030-> {6, (nil)}
+18	   free (ptr);
+(gdb) next
+19	   return EXIT_SUCCESS;
+(gdb) next
+20	}
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 16550] will be killed.
+
+Quit anyway? (y or n) y
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ ls v[K
+[0m[01;32mlist1[0m    [01;32mmalloc[0m    [01;32mmk[0m      part02  part04  [01;32muninit[0m
+list1.c  malloc.c  part01  part03  [01;34mRCS[0m     uninit.c
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list1.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list1.c" 26L, 615C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[15;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[16;6H assert (node != [31mNULL[m);[17;6H node->word = argv[argi];[18;6H node->link = head;[19;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[22;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[23;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H1,1[11CAll[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list.c[K[K1.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ script 05[K[Kpart05
+Script started, file is part05
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list1.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+Script done, file is part05
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi[K[Kls
+[0m[01;32mlist1[0m    [01;32mmalloc[0m    [01;32mmk[0m      part02  part04  [01;34mRCS[0m     uninit.c
+list1.c  malloc.c  part01  part03  part05  [01;32muninit[0m
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi part03[K2
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part02" 0L, 0C[>c[2;1H[1m[34m~                                                                                [3;1H~                                                                                [4;1H~                                                                                [5;1H~                                                                                [6;1H~                                                                                [7;1H~                                                                                [8;1H~                                                                                [9;1H~                                                                                [10;1H~                                                                                [11;1H~                                                                                [12;1H~                                                                                [13;1H~                                                                                [14;1H~                                                                                [15;1H~                                                                                [16;1H~                                                                                [17;1H~                                                                                [18;1H~                                                                                [19;1H~                                                                                [20;1H~                                                                                [21;1H~                                                                                [22;1H~                                                                                [23;1H~                                                                                [24;1H~                                                                                [25;1H~                                                                                [26;1H~                                                                                [27;1H~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H0,0-1[9CAll[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi part 03[K[K03
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part03" [noeol] 178L, 12288C[>c[1;1HScript started on Tue 05 Nov 2013 07:54:33 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ g[34m^M^[[m[K[34m^[[m]0;asilva3@unix1:lab5[34m^G[m[aa[4;1Hsilva3@unix1 lab5]$ gdb uninit[34m^M^M
+^[[m[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)[34m^M[m
+Copyright (C) 2010 Free Software Foundation, Inc.[34m^M[m
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>[34m^M[m
+This is free software: you are free to change and redistribute it.[34m^M[m
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"[34m^M[m
+and "show warranty" for details.[34m^M[m
+This GDB was configured as "x86_64-redhat-linux-gnu".[34m^M[m
+For bug reporting instructions, please see:[34m^M[m
+<http://www.gnu.org/software/gdb/bugs/>...[34m^M[m
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/unii[15;1Hnit...done.[34m^M[m
+(gdb) break mea[34m^H^[[m[K[34m^H^[[m[Kain[34m^M[m
+Breakpoint 1 at 0x400503: file uninit.c, line 8.[34m^M[m
+(gdb) run[34m^M[m
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/uninitt[20;1H [34m^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug"  [22;1Hdoes not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" dd[25;1Hoes not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debugg[28;1H" does not match "/lib64/libm.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug""[31;1H does not match "/lib64/libm.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debugg[34;1H" does not match "/lib64/libc.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug""[37;1H does not match "/lib64/libc.so.6" (CRC mismatch).[34m^M
+^M
+^M[m
+Breakpoint 1, main (argc=1, argv=0x7fffffffe288) at uninit.c:8[34m^M[m
+8[9C printf ("%d\n", foo);[34m^M[m
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_[42;1H[1m[34m@                                                                                [m[43;64H1,1[11CTop[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ part03[K4
+part04: Permission denied.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi part03[K4
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part04" [noeol] 136L, 12288C[>c[1;1HScript started on Tue 05 Nov 2013 08:05:01 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ valgrind malloc[34m^M^M[m
+==16526== Memcheck, a memory error detector[34m^M[m
+==16526== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.[34m^M[m
+==16526== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info[34m^M[m
+==16526== Command: malloc[34m^M[m
+==16526== [34m^M[m
+0x4c27090-> {6, (nil)}[34m^M[m
+==16526== [34m^M[m
+==16526== HEAP SUMMARY:[34m^M[m
+==16526==     in use at exit: 16 bytes in 1 blocks[34m^M[m
+==16526==   total heap usage: 2 allocs, 1 frees, 32 bytes allocated[34m^M[m
+==16526== [34m^M[m
+==16526== LEAK SUMMARY:[34m^M[m
+==16526==    definitely lost: 16 bytes in 1 blocks[34m^M[m
+==16526==    indirectly lost: 0 bytes in 0 blocks[34m^M[m
+==16526==      possibly lost: 0 bytes in 0 blocks[34m^M[m
+==16526==    still reachable: 0 bytes in 0 blocks[34m^M[m
+==16526==[8C suppressed: 0 bytes in 0 blocks[34m^M[m
+==16526== Rerun with --leak-check=full to see details of leaked memory[34m^M[m
+==16526== [34m^M[m
+==16526== For counts of detected and suppressed errors, rerun with: -v[34m^M[m
+==16526== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 6 from 6)[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ gdb malloc[34m^M^M
+^[[m[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)[34m^M[m
+Copyright (C) 2010 Free Software Foundation, Inc.[34m^M[m
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>[34m^M[m
+This is free software: you are free to change and redistribute it.[34m^M[m
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"[34m^M[m
+and "show warranty" for details.[34m^M[m
+This GDB was configured as "x86_64-redhat-linux-gnu".[34m^M[m
+For bug reporting instructions, please see:[34m^M[m
+<http://www.gnu.org/software/gdb/bugs/>...[34m^M[m
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/mall[36;1Hloc...done.[34m^M[m
+(gdb) break main[34m^M[m
+Breakpoint 1 at 0x400594: file malloc.c, line 13.[34m^M[m
+(gdb) run[34m^M[m
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/mallocc[41;1H [34m^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug"[1m[34m@                                                                                [m[43;64H1,1[11CTop[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi part05
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part05" 10L, 448C[>c[1;1HScript started on Tue 05 Nov 2013 08:18:04 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ mk list1.c[34m^M^M[m
+mk: line 1: Script: command not found[34m^M[m
+mk: line 2: syntax error near unexpected token `('[34m^M[m
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M[m'[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ exit[34m^M^M[m
+exit[34m^M[m
+
+Script done on Tue 05 Nov 2013 08:18:32 PM PST
+[1m[34m~                                                                                [12;1H~                                                                                [13;1H~                                                                                [14;1H~                                                                                [15;1H~                                                                                [16;1H~                                                                                [17;1H~                                                                                [18;1H~                                                                                [19;1H~                                                                                [20;1H~                                                                                [21;1H~                                                                                [22;1H~                                                                                [23;1H~                                                                                [24;1H~                                                                                [25;1H~                                                                                [26;1H~                                                                                [27;1H~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H1,1[11CAll[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi part04[K2
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part02" 0L, 0C[>c[2;1H[1m[34m~                                                                                [3;1H~                                                                                [4;1H~                                                                                [5;1H~                                                                                [6;1H~                                                                                [7;1H~                                                                                [8;1H~                                                                                [9;1H~                                                                                [10;1H~                                                                                [11;1H~                                                                                [12;1H~                                                                                [13;1H~                                                                                [14;1H~                                                                                [15;1H~                                                                                [16;1H~                                                                                [17;1H~                                                                                [18;1H~                                                                                [19;1H~                                                                                [20;1H~                                                                                [21;1H~                                                                                [22;1H~                                                                                [23;1H~                                                                                [24;1H~                                                                                [25;1H~                                                                                [26;1H~                                                                                [27;1H~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H0,0-1[9CAll[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vim part02
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part02" 0L, 0C[>c[2;1H[1m[34m~                                                                                [3;1H~                                                                                [4;1H~                                                                                [5;1H~                                                                                [6;1H~                                                                                [7;1H~                                                                                [8;1H~                                                                                [9;1H~                                                                                [10;1H~                                                                                [11;1H~                                                                                [12;1H~                                                                                [13;1H~                                                                                [14;1H~                                                                                [15;1H~                                                                                [16;1H~                                                                                [17;1H~                                                                                [18;1H~                                                                                [19;1H~                                                                                [20;1H~                                                                                [21;1H~                                                                                [22;1H~                                                                                [23;1H~                                                                                [24;1H~                                                                                [25;1H~                                                                                [26;1H~                                                                                [27;1H~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H0,0-1[9CAll[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ script 02[K[Kpart02
+Script started, file is part02
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ d[Kgdb uninit
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/uninit...done.
+(gdb) run
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/uninit 
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+32767
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040051e in main (argc=1, argv=0x7fffffffe1e8) at uninit.c:10
+10	   printf ("%d\n", *pointer);
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_64
+(gdb) where
+#0  0x000000000040051e in main (argc=1, argv=0x7fffffffe1e8) at uninit.c:10
+(gdb) list
+5	
+6	int main (int argc, char **argv) {
+7	   int foo;
+8	   printf ("%d\n", foo);
+9	   int *pointer;
+10	   printf ("%d\n", *pointer);
+11	}
+(gdb) print foo
+$1 = 32767
+(gdb) print pointer
+$2 = (int *) 0x0
+(gdb) print pointer[K[K[K[K[K[K[K*pointer
+Cannot access memory at address 0x0
+(gdb) print argv[0[[K]
+$3 = 0x7fffffffe483 "/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/uninit"
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 18857] will be killed.
+
+Quit anyway? (y or n) y
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+Script done, file is part02
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi part03[K2
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part02" 61L, 2715C[>c[1;1HScript started on Tue 05 Nov 2013 08:19:37 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ d[34m^H^[[m[Kgdb uninit[34m^M^M
+^[[m[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)[34m^M[m
+Copyright (C) 2010 Free Software Foundation, Inc.[34m^M[m
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>[34m^M[m
+This is free software: you are free to change and redistribute it.[34m^M[m
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"[34m^M[m
+and "show warranty" for details.[34m^M[m
+This GDB was configured as "x86_64-redhat-linux-gnu".[34m^M[m
+For bug reporting instructions, please see:[34m^M[m
+<http://www.gnu.org/software/gdb/bugs/>...[34m^M[m
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/unii[14;1Hnit...done.[34m^M[m
+(gdb) run[34m^M[m
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/uninitt[17;1H [34m^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug"  [19;1Hdoes not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" dd[22;1Hoes not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debugg[25;1H" does not match "/lib64/libm.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug""[28;1H does not match "/lib64/libm.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debugg[31;1H" does not match "/lib64/libc.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug""[34;1H does not match "/lib64/libc.so.6" (CRC mismatch).[34m^M
+^M[m
+32767[34m^M
+^M[m
+Program received signal SIGSEGV, Segmentation fault.[34m^M[m
+0x000000000040051e in main (argc=1, argv=0x7fffffffe1e8) at uninit.c:10[34m^M[m
+10[8C printf ("%d\n", *pointer);[34m^M[m
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86__[42;1H64[34m^M[m[43;64H1,1[11CTop[1;1H[?12l[?25h[?25l[43;64H2[2;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H9[9;1H[?12l[?25h[?25l[43;64H10,1[10;1H[?12l[?25h[?25l[43;65H1[11;1H[?12l[?25h[?25l[43;65H2[12;1H[?12l[?25h[?25l[43;65H3[13;1H[?12l[?25h[?25l[80Cii[14;1Hn
+[46m([mgdb[46m)[m[43;65H4[15;1H[?12l[?25h[?25l(gdb)[43;65H5[16;1H[?12l[?25h[?25l[43;65H6[18;1H[?12l[?25h[?25l[43;65H7[20;1H[?12l[?25h[?25l[43;65H8[21;1H[?12l[?25h[?25l[43;65H9[23;1H[?12l[?25h[?25l[43;64H20[24;1H[?12l[?25h[?25l[43;65H1[26;1H[?12l[?25h[?25l[43;65H2[27;1H[?12l[?25h[?25l[43;65H3[29;1H[?12l[?25h[?25l[43;65H4[30;1H[?12l[?25h[?25l[43;65H5[32;1H[?12l[?25h[?25l[43;65H6[33;1H[?12l[?25h[?25l[43;65H7[35;1H[?12l[?25h[?25l[43;65H8[36;1H[?12l[?25h[?25l[43;65H9[37;1H[?12l[?25h[?25l[43;64H30[38;1H[?12l[?25h[?25l[43;65H1[39;1H[?12l[?25h[?25l[43;65H2[40;1H[?12l[?25h[?25l[43;65H3[41;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m where[34m^M[m[43;1H[K[43;64H34,1[11C3%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+#0  0x000000000040051e in main (argc=1, argv=0x7fffffffe1e8) at uninit.c:10[34m^M[m[43;64H[K[43;64H35,1[11C7%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m list[34m^M[m[43;64H[K[43;64H36,1[10C10%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+5       [34m^M[m[43;64H[K[43;64H37,1[10C14%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H6       int main (int argc, char **argv) {[34m^M[m[43;64H[K[43;64H38,1[10C17%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H7[9C int foo;[34m^M[m[43;64H[K[43;64H39,1[10C21%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H8[9C printf ("%d\n", foo);[34m^M[m[43;64H[K[43;64H40,1[10C25%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H9[9C int *pointer;[34m^M[m[43;64H[K[43;64H41,1[10C28%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H10[8C printf ("%d\n", *pointer);[34m^M[m[43;64H[K[43;64H42,1[10C32%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H11      }[34m^M[m[43;64H[K[43;64H43,1[10C35%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m print foo[34m^M[m[43;64H[K[43;64H44,1[10C39%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+$1 = 32767[34m^M[m[43;64H[K[43;64H45,1[10C42%[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[41;1H[46m([mgdb[46m)[m print pointer[34m^M[m
+$2 = (int *) 0x0[34m^M[m[43;64H[K[43;64H46,1[10C48%[41;1H[?12l[?25h[?25l(gdb)[43;65H7[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m print pointer[34m^H^[[m[K[34m^H^[[m[K[34m^H^[[m[K[34m^H^[[m[K[34m^H^[[m[K[34m^H^[[m[K[34m^H^[[m[K*pointer[34m^M[m[43;64H[K[43;64H48,1[10C51%[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[40;1H(gdb)
+Cannot access memory at address 0x0[34m^M[m
+(gdb) print argv[0[[34m^H^[[m[K][34m^M[m[43;64H[K[43;64H49,1[10C57%[41;1H[?12l[?25h[?25l
+[46m([mgdb[46m)[m[43;64H50[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[40;1H(gdb)
+$3 = 0x7fffffffe483 "/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/unii[42;1Hnit"[34m^M[m[43;64H[K[43;64H51,1[10C61%[41;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m quit[34m^M[m[43;64H[K[43;64H52,1[10C65%[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[40;1H(gdb)
+A debugging session is active.[34m^M
+^M[m[43;64H[K[43;64H53,1[10C72%[41;1H[?12l[?25h[?25l[43;65H4[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;8H Inferior 1 [process 18857] will be killed.[34m^M[m[43;64H[K[43;64H55,1-8[8C76%[42;8H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[41;1H[34m^M[m
+Quit anyway? (y or n) y[34m^M[m[43;64H[K[43;64H56,1[10C83%[41;1H[?12l[?25h[?25l[43;65H7[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[34m^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ exit[34m^M^M[m[43;64H[K[43;64H58,1[10C87%[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[41;1Hexit[34m^M[m[43;64H[K[43;64H59,1[10C95%[41;1H[?12l[?25h[?25l[43;64H60,0-1[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1HScript done on Tue 05 Nov 2013 08:20:18 PM PST[43;64H[K[43;64H61,1[10CBot[42;1H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ clear
+[H[2J]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ part[K[K[K[Kscript 0[Kpart06
+Script started, file is part06
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+Script done, file is part06
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ ls
+[0m[01;32mlist1[0m    [01;32mmalloc[0m    [01;32mmk[0m      part02  part04  part06  [01;32muninit[0m
+list1.c  malloc.c  part01  part03  part05  [01;34mRCS[0m     uninit.c
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ cp list1/c[K[K.c to list2.c
+cp: target `list2.c' is not a directory
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ cp list1.c list2.c
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ ls
+[0m[01;32mlist1[0m    list2.c  malloc.c  part01  part03  part05  [01;34mRCS[0m     uninit.c
+list1.c  [01;32mmalloc[0m   [01;32mmk[0m        part02  part04  part06  [01;32muninit[0m
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ script part06
+Script started, file is part06
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list[Kt2.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind list2 foo bar
+valgrind: list2: command not found
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+Script done, file is part06
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ ls
+[0m[01;32mlist1[0m    list2.c  malloc.c  part01  part03  part05  [01;34mRCS[0m     uninit.c
+list1.c  [01;32mmalloc[0m   [01;32mmk[0m        part02  part04  part06  [01;32muninit[0m
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi  list2.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 26L, 615C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[15;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[16;6H assert (node != [31mNULL[m);[17;6H node->word = argv[argi];[18;6H node->link = head;[19;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[22;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[23;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H1,1[11CAll[1;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5,0-1[5;1H[?12l[?25h[?25l[43;64H6,1  [6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;66H2[8;2H[?12l[?25h[?25l[43;66H3[8;3H[?12l[?25h[?25l[43;64H9[9;3H[?12l[?25h[?25l[43;64H10,2[10;2H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H10,2[10CAll[10;2H[?12l[?25h[?25l[43;67H3[10;3H[?12l[?25h[43;1H[K[10;2H[?25l[43;64H10,2[10CAll[10;2H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list2.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 26L, 615C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node [46m{[m
+   [32mchar[m *word;
+   node *link;
+[46m}[m;
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[15;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[16;6H assert (node != [31mNULL[m);[17;6H node->word = argv[argi];[18;6H node->link = head;[19;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[22;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[23;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H10,1[10CAll[10;1H[?12l[?25h[?25l[7;13H{
+
+
+}[43;64H9,1 [9;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H5,0-1[5;1H[?12l[?25h[?25l[43;64H4,1  [4;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H2,1[11CAll[2;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H9[9;1H[?12l[?25h[?25l[7;13H[46m{
+
+
+}[m[43;64H10,1[10;1H[?12l[?25h[?25l[7;13H{
+
+
+}[43;65H1[11;1H[?12l[?25h[?25l[43;65H2[12;1H[?12l[?25h[?25l[43;65H3[13;1H[?12l[?25h[?25l[43;65H4[14;1H[?12l[?25h[?25l[43;65H5[15;1H[?12l[?25h[?25l[43;65H6[16;1H[?12l[?25h[?25l[43;65H7[17;1H[?12l[?25h[?25l[43;65H8[18;1H[?12l[?25h[?25l[43;65H9[19;1H[?12l[?25h[?25l[43;64H20[20;1H[?12l[?25h[?25l[43;65H1[21;1H[?12l[?25h[?25l[43;65H2[22;1H[?12l[?25h[?25l[43;65H3[23;1H[?12l[?25h[?25l[43;65H4[24;1H[?12l[?25h[?25l[43;65H5[25;1H[?12l[?25h[?25l[12;34H[46m{[26;1H}[m[43;65H6[26;1H[?12l[?25h[?25l[12;34H{[26;1H}[43;65H5[25;1H[?12l[?25h[?25l[43;65H4[24;1H[?12l[?25h[?25l[43;65H3[23;1H[?12l[?25h[?25l[43;67H2[23;2H[?12l[?25h[?25l[43;67H3[23;3H[?12l[?25h[?25l[43;65H4[24;3H[?12l[?25h[?25l[21;67H[46m{[24;4H}[m[43;67H4[24;4H[?12l[?25h[?25l[21;67H{[24;4H}[43;65H3[23;4H[?12l[?25h[?25l[43;65H2[22;4H[?12l[?25h[?25l[43;65H1[21;4H[?12l[?25h[?25l[14;41H[46m{[20;4H}[m[43;65H0[20;4H[?12l[?25h[?25l[14;41H{[20;4H}[43;64H19[19;4H[?12l[?25h[?25l[43;65H8[18;4H[?12l[?25h[?25l[43;65H7[17;4H[?12l[?25h[?25l[43;65H6[16;4H[?12l[?25h[?25l[43;65H5[15;4H[?12l[?25h[?25l[43;65H4[14;4H[?12l[?25h[?25l[43;65H3[13;4H[?12l[?25h[?25l[43;65H2[12;4H[?12l[?25h[?25l[43;65H1,1[11;1H[?12l[?25h[?25l[43;65H0,3[10;3H[?12l[?25h[?25l[10;2H[K[7;13H[46m{
+
+
+}[m[43;67H2[10;2H[?12l[?25h[43;1H[K[10;1H[?25l[43;64H10,1[10CAll[10;1H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hi[?25l[?12l[?25h[?25l[43;2H[K[43;2H[?12l[?25h [?25l[62C10,1[10CAll[10;1H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list2.c" 26L, 614C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list2.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 26L, 614C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node [46m{[m
+   [32mchar[m *word;
+   node *link;
+[46m}[m
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[15;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[16;6H assert (node != [31mNULL[m);[17;6H node->word = argv[argi];[18;6H node->link = head;[19;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[22;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[23;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H10,1[10CAll[10;1H[?12l[?25h[?25l[7;13H{
+
+
+}[43;64H9,1 [9;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H5,0-1[5;1H[?12l[?25h[?25l[43;64H4,1  [4;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H1,1  [1;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5,0-1[5;1H[?12l[?25h[?25l[43;64H4,1  [4;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H1,1  [1;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5,0-1[5;1H[?12l[?25h[?25l[43;64H6,1  [6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H5,0-1[5;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H5,1[11CAll[5;1H[?12l[?25h[?25l[6;42r[6;1H[L[1;43r[43;64H[K[43;64H6,1[11CAll[6;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l#[43;66H2[5;2H[?12l[?25h[?25l#i[43;66H3[5;3H[?12l[?25h[?25lin[43;66H4[5;4H[?12l[?25h[?25lnc[43;66H5[5;5H[?12l[?25h[?25lcl[43;66H6[5;6H[?12l[?25h[?25llu[43;66H7[5;7H[?12l[?25h[?25lud[43;66H8[5;8H[?12l[?25h[?25lde[43;66H9[5;9H[?12l[?25h[?25l[35m#include<[m[43;66H10[5;10H[?12l[?25h[?25l[35m<[ms[43;67H1[5;11H[?12l[?25h[?25lst[43;67H2[5;12H[?12l[?25h[?25ltd[43;67H3[5;13H[?12l[?25h[?25ldl[43;67H4[5;14H[?12l[?25h[?25lli[43;67H5[5;15H[?12l[?25h[?25lib[43;67H6[5;16H[?12l[?25h[?25lb.[43;67H7[5;17H[?12l[?25h[?25l.h[43;67H8[5;18H[?12l[?25h[?25lh?[7;25H[1m[37m[41m;[8;13H{[9;14H;[10;14H;
+}[13;34H{[14;14H;[15;41H{[16;49H;[17;28H;[18;30H;[19;24H;[20;18H;
+[m   [1m[37m[41m}[22;67H{[24;56H;
+[m   [1m[37m[41m}[26;12H;
+}[m[43;67H9[5;19H[?12l[?25h[?25l[5;18H[K[7;25H;[8;13H{[9;14H;[10;14H;
+}[13;34H{[14;14H;[15;41H{[16;49H;[17;28H;[18;30H;[19;24H;[20;18H;
+   }[22;67H{[24;56H;
+   }[26;12H;
+}[43;67H8[5;18H[?12l[?25h[?25l[5;9H[31m<stdlib.h>[m[43;67H9[5;19H[?12l[?25h[43;1H[K[5;18H[?25l[43;64H5,18[10CAll[5;18H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list2.c" 27L, 633C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c[23Gmk[33G
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list2.c[23Gvi[33G
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 27L, 633C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include[m[31m<stdlib.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+}
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[16;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[17;6H assert (node != [31mNULL[m);[18;6H node->word = argv[argi];[19;6H node->link = head;[20;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[23;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[24;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H5,1[11CAll[5;1H[?12l[?25h[?25l[43;66H2[5;2H[?12l[?25h[?25l[43;66H3[5;3H[?12l[?25h[?25l[43;66H4[5;4H[?12l[?25h[?25l[43;66H5[5;5H[?12l[?25h[?25l[43;66H6[5;6H[?12l[?25h[?25l[43;66H7[5;7H[?12l[?25h[?25l[43;66H8[5;8H[?12l[?25h[?25l[43;66H9[5;9H[?12l[?25h[?25l[43;66H10[5;10H[?12l[?25h[?25l[43;66H9 [5;9H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H5,9[11CAll[5;9H[?12l[?25h[?25l[35me [m[31m<stdlib.h>[m[43;66H10[5;10H[?12l[?25h[43;1H[K[5;9H[?25l[43;64H5,9[11CAll[5;9H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list2.c" 27L, 634C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c[23Gmk[33G
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ clear
+[H[2J]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ clear[23Gmk list2.c[K[K[K[K[K[K[K[K[Kscript part06
+Script started, file is part06
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list2.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 27L, 634C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+}
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[16;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[17;6H assert (node != [31mNULL[m);[18;6H node->word = argv[argi];[19;6H node->link = head;[20;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[23;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[24;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H5,1[11CAll[5;1H[?12l[?25h[?25l[43;64H6,0-1[6;1H[?12l[?25h[?25l[43;64H7,1  [7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H9[9;1H[?12l[?25h[?25l[43;64H10,1[10;1H[?12l[?25h[?25l[8;13H[46m{
+
+
+}[m[43;65H1[11;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H11,1[10CAll[11;1H[?12l[?25h[?25l[43;67H2[11;2H[?12l[?25h[?25l[46m}[m;[8;13H{
+
+
+}[43;67H3[11;3H[?12l[?25h[43;1H[K[11;2H[?25l[43;64H11,2[10CAll[11;2H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;2H[K[43;2H[?12l[?25hx[?25l[?12l[?25h[?25l"list2.c" 27L, 635C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c[23Gmk[33G
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list.[K2.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 27L, 635C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node [46m{[m
+   [32mchar[m *word;
+   node *link;
+[46m}[m;
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[16;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[17;6H assert (node != [31mNULL[m);[18;6H node->word = argv[argi];[19;6H node->link = head;[20;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[23;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[24;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H11,1[10CAll[11;1H[?12l[?25h[?25l[8;13H{
+
+
+}[43;65H0[10;1H[?12l[?25h[?25l[43;64H9,1 [9;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H7,1[11CAll[7;1H[?12l[?25h[?25l[8;42r[8;1H[L[1;43r[7;1H[K[8;1H[32mtypedef[m [32mstruct[m node node;[43;64H[K[43;64H8,1[11CAll[8;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25lv[43;66H2[7;2H[?12l[?25h[?25lvo[43;66H3[7;3H[?12l[?25h[?25loi[43;66H4[7;4H[?12l[?25h[?25l[32mvoid[m[43;66H5[7;5H[?12l[?25h[?25l[43;66H6[7;6H[?12l[?25h[?25l *[43;66H7[7;7H[?12l[?25h[?25l*m[43;66H8[7;8H[?12l[?25h[?25lma[43;66H9[7;9H[?12l[?25h[?25lal[43;66H10[7;10H[?12l[?25h[?25lll[43;67H1[7;11H[?12l[?25h[?25llo[43;67H2[7;12H[?12l[?25h[?25loc[43;67H3[7;13H[?12l[?25h[?25lc([9;13H[1m[37m[41m{
+
+
+}[14;34H{[16;41H{[22;4H}[23;67H{[26;4H}
+
+}[m[43;67H4[7;14H[?12l[?25h[?25l(s[43;67H5[7;15H[?12l[?25h[?25lsi[43;67H6[7;16H[?12l[?25h[?25liz[43;67H7[7;17H[?12l[?25h[?25lze[43;67H8[7;18H[?12l[?25h[?25l[43;67H9[7;19H[?12l[?25h[?25l[43;67H8[7;18H[?12l[?25h[?25le_[43;67H9[7;19H[?12l[?25h[?25l[32msize_t[m[43;66H20[7;20H[?12l[?25h[?25l[43;67H1[7;21H[?12l[?25h[?25l s[43;67H2[7;22H[?12l[?25h[?25lsi[43;67H3[7;23H[?12l[?25h[?25liz[43;67H4[7;24H[?12l[?25h[?25lze[43;67H5[7;25H[?12l[?25h[?25le)[9;13H{
+
+
+};[14;34H{[16;41H{[22;4H}[23;67H{[26;4H}
+
+}[7;13H[46m([11C)[m[43;67H6[7;26H[?12l[?25h[?25l[46m)[m;[7;13H([11C)[43;67H7[7;27H[?12l[?25h[?25l[8;42r[8;1H[L[1;43r[43;64H[K[43;64H8,1[11CAll[8;1H[?12l[?25h[43;1H[K[8;1H[?25l[43;64H8,0-1[9CAll[8;1H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list2.c" 29L, 663C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c[23Gmk[33G[23Gexit[Kmk list2.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list2.c[23Gvi[33G
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 29L, 663C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mvoid[m *malloc([32msize_t[m size);
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[18;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[19;6H assert (node != [31mNULL[m);[20;6H node->word = argv[argi];[21;6H node->link = head;[22;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[25;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[26;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H8,0-1[9CAll[8;1H[?12l[?25h[?25l[43;64H7,1  [7;1H[?12l[?25h[?25l[43;64H6,0-1[6;1H[?12l[?25h[?25l[43;64H5,1  [5;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H1,1  [1;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6,0-1[6;1H[?12l[?25h[?25l[43;64H7,1  [7;1H[?12l[?25h[?25l[43;64H8,0-1[8;1H[?12l[?25h[?25l[43;64H9,1  [9;1H[?12l[?25h[?25l[43;64H10,1[10;1H[?12l[?25h[?25l[43;65H1[11;1H[?12l[?25h[?25l[43;65H2[12;1H[?12l[?25h[?25l[10;13H[46m{
+
+
+}[m[43;65H3[13;1H[?12l[?25h[?25l[10;13H{
+
+
+}[43;65H4,0-1[14;1H[?12l[?25h[?25l[43;65H5,1  [15;1H[?12l[?25h[?25l[43;65H6[16;1H[?12l[?25h[?25l[43;65H7[17;1H[?12l[?25h[?25l[43;65H8[18;1H[?12l[?25h[?25l[43;65H9[19;1H[?12l[?25h[?25l[43;64H20[20;1H[?12l[?25h[?25l[43;65H1[21;1H[?12l[?25h[?25l[43;65H2[22;1H[?12l[?25h[?25l[43;65H3[23;1H[?12l[?25h[?25l[43;65H4[24;1H[?12l[?25h[?25l[43;65H5[25;1H[?12l[?25h[?25l[43;65H6[26;1H[?12l[?25h[?25l[43;65H7[27;1H[?12l[?25h[?25l[43;65H8[28;1H[?12l[?25h[?25l[15;34H[46m{[29;1H}[m[43;65H9[29;1H[?12l[?25h[?25l[15;34H{[29;1H}[43;65H8[28;1H[?12l[?25h[?25l[43;65H7[27;1H[?12l[?25h[?25l[43;65H6[26;1H[?12l[?25h[?25l[43;65H5[25;1H[?12l[?25h[?25l[43;65H4[24;1H[?12l[?25h[?25l[43;65H3[23;1H[?12l[?25h[?25l[43;65H2[22;1H[?12l[?25h[?25l[43;65H1[21;1H[?12l[?25h[?25l[43;65H0[20;1H[?12l[?25h[?25l[43;64H19[19;1H[?12l[?25h[?25l[43;65H8[18;1H[?12l[?25h[?25l[43;65H7[17;1H[?12l[?25h[?25l[43;65H6[16;1H[?12l[?25h[?25l[43;65H5[15;1H[?12l[?25h[?25l[43;65H4,0-1[14;1H[?12l[?25h[?25l[10;13H[46m{
+
+
+}[m[43;65H3,1  [13;1H[?12l[?25h[?25l[10;13H{
+
+
+}[43;65H2[12;1H[?12l[?25h[?25l[43;65H1[11;1H[?12l[?25h[?25l[43;65H0[10;1H[?12l[?25h[?25l[43;64H9,1 [9;1H[?12l[?25h[?25l[43;64H8,0-1[8;1H[?12l[?25h[?25l[43;64H7,1  [7;1H[?12l[?25h[?25l[43;64H6,0-1[6;1H[?12l[?25h[?25l[43;64H5,1  [5;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H2,1[11CAll[2;1H[?12l[?25h[?25l{[43;66H2[2;2H[?12l[?25h[?25l[2;1H[K[43;66H1[2;1H[?12l[?25h[?25l[31m9[m[43;66H2[2;2H[?12l[?25h[?25l[2;1H[K[43;66H1[2;1H[?12l[?25h[?25l([10;13H[1m[37m[41m{
+
+
+}[15;34H{[17;41H{[23;4H}[24;67H{[27;4H}
+
+}[m[43;66H2[2;2H[?12l[?25h[43;1H[K[2;1H[?25l[43;64H2,1[11CAll[2;1H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list2.c" 29L, 664C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c[23Gmk[33G
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+Script done, file is part06
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list2.c
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 29L, 664C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+(
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mvoid[m *malloc([32msize_t[m size);
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node [1m[37m[41m{[m
+   [32mchar[m *word;
+   node *link;
+[1m[37m[41m}[m;
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) [1m[37m[41m{[m
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) [1m[37m[41m{[m[18;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[19;6H assert (node != [31mNULL[m);[20;6H node->word = argv[argi];[21;6H node->link = head;[22;6H head = node;
+   [1m[37m[41m}[m
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) [1m[37m[41m{[m[25;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[26;14H curr, curr->word, curr->word, curr->link);
+   [1m[37m[41m}[m
+   [33mreturn[m [31m9[m;
+[1m[37m[41m}[m
+[1m[34m~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H2,1[11CAll[2;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6,0-1[6;1H[?12l[?25h[?25l[43;64H7,1  [7;1H[?12l[?25h[?25l[43;64H6,0-1[6;1H[?12l[?25h[?25l[43;64H5,1  [5;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H3,1[11CAll[3;1H[?12l[?25h[?25l[43;64H2[2;1H[?12l[?25h[?25l[43;66H2[2;2H[?12l[?25h[?25l[2;1H[K[10;13H{
+
+
+};[15;34H{[17;41H{[23;4H}[24;67H{[27;4H}
+
+}[43;66H1[2;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;66H2[7;2H[?12l[?25h[?25l[43;66H3[7;3H[?12l[?25h[?25l[43;66H4[7;4H[?12l[?25h[?25l[43;66H5[7;5H[?12l[?25h[?25l[43;66H6[7;6H[?12l[?25h[?25l[43;66H7[7;7H[?12l[?25h[?25l[43;66H8[7;8H[?12l[?25h[?25l[43;66H9[7;9H[?12l[?25h[?25l[43;66H10[7;10H[?12l[?25h[?25l[43;67H1[7;11H[?12l[?25h[?25l[43;67H2[7;12H[?12l[?25h[?25lc[46m([11C)[m[43;67H3[7;13H[?12l[?25h[?25l[43;67H4[7;14H[?12l[?25h[?25l([11C)[43;67H5[7;15H[?12l[?25h[?25l[43;67H6[7;16H[?12l[?25h[?25l[43;67H7[7;17H[?12l[?25h[?25l[43;67H8[7;18H[?12l[?25h[?25l[43;67H9[7;19H[?12l[?25h[?25l[43;66H20[7;20H[?12l[?25h[?25l[43;67H1[7;21H[?12l[?25h[?25l[43;67H2[7;22H[?12l[?25h[?25l[43;67H3[7;23H[?12l[?25h[?25l[43;67H4[7;24H[?12l[?25h[?25l[7;13H[46m([11C)[m[43;67H5[7;25H[?12l[?25h[?25l[43;67H6[7;26H[?12l[?25h[?25l[7;13H([11C)[43;67H7[7;27H[?12l[?25h[?25l[7;26H[K[7;13H[46m([11C)[m[43;67H6[7;26H[?12l[?25h[?25l[7;25H[K[10;13H[1m[37m[41m{
+
+
+}[15;34H{[17;41H{[23;4H}[24;67H{[27;4H}
+
+}[m[7;13H([43;67H5[7;25H[?12l[?25h[?25l[7;24H[K[43;67H4[7;24H[?12l[?25h[?25l[7;23H[K[43;67H3[7;23H[?12l[?25h[?25l[7;22H[K[43;67H2[7;22H[?12l[?25h[?25l[7;21H[K[43;67H1[7;21H[?12l[?25h[?25l[43;67H0[7;20H[?12l[?25h[?25lsize_[7;19H[K[43;66H19[7;19H[?12l[?25h[?25l[7;18H[K[43;67H8[7;18H[?12l[?25h[?25l[7;17H[K[43;67H7[7;17H[?12l[?25h[?25l[7;16H[K[43;67H6[7;16H[?12l[?25h[?25l[7;15H[K[43;67H5[7;15H[?12l[?25h[?25l[7;14H[K[43;67H4[7;14H[?12l[?25h[?25l[7;13H[K[10;13H{
+
+
+};[15;34H{[17;41H{[23;4H}[24;67H{[27;4H}
+
+}[43;67H3[7;13H[?12l[?25h[?25l[7;12H[K[43;67H2[7;12H[?12l[?25h[?25l[7;11H[K[43;67H1[7;11H[?12l[?25h[?25l[7;10H[K[43;67H0[7;10H[?12l[?25h[?25l[7;9H[K[43;66H9 [7;9H[?12l[?25h[?25l[7;8H[K[43;66H8[7;8H[?12l[?25h[?25l[7;7H[K[43;66H7[7;7H[?12l[?25h[?25l[7;6H[K[43;66H6[7;6H[?12l[?25h[?25l[43;66H5[7;5H[?12l[?25h[?25lvoi[7;4H[K[43;66H4[7;4H[?12l[?25h[?25l[7;3H[K[43;66H3[7;3H[?12l[?25h[?25l[7;2H[K[43;66H2[7;2H[?12l[?25h[?25l[7;1H[K[43;66H1[7;1H[?12l[?25h[?25l[6;42r[42;1H
+[1;43r[42;1H[1m[34m~                                                                                [m[43;64H[K[43;64H6,1[11CAll[6;1H[?12l[?25h[?25l[5;42r[42;1H
+[1;43r[5;1H[35m#include [m[31m<stdlib.h>[m[42;1H[1m[34m~                                                                                [m[43;64H[K[43;64H5,20[10CAll[5;20H[?12l[?25h[?25l[43;64H6,1 [6;1H[?12l[?25h[?25l[43;64H7,20[7;20H[?12l[?25h[?25l[8;13H[46m{
+
+
+}[m[43;64H8,14[8;14H[?12l[?25h[?25l{
+
+
+}[43;64H9,15[9;15H[?12l[?25h[?25l[43;64H10,15[10;15H[?12l[?25h[?25l[43;65H1,3 [11;3H[?12l[?25h[?25l[43;65H2,1[12;1H[?12l[?25h[?25l[43;65H3,20[13;20H[?12l[?25h[?25l[43;65H4,15[14;15H[?12l[?25h[?25l[43;65H5,20[15;20H[?12l[?25h[?25l[43;65H6[16;20H[?12l[?25h[?25l[43;65H7[17;20H[?12l[?25h[?25l[43;65H8[18;20H[?12l[?25h[?25l[43;65H9[19;20H[?12l[?25h[?25l[43;64H20,19[20;19H[?12l[?25h[?25l[15;41H[46m{[21;4H}[m[43;65H1,5 [21;5H[?12l[?25h[?25l[15;41H{[21;4H}[43;65H2,20[22;20H[?12l[?25h[?25l[43;65H3[23;20H[?12l[?25h[?25l[43;65H4[24;20H[?12l[?25h[?25l[43;65H3[23;20H[?12l[?25h[?25l[43;65H2[22;20H[?12l[?25h[?25l[15;41H[46m{[21;4H}[m[43;65H1,5 [21;5H[?12l[?25h[?25l[15;41H{[21;4H}[43;65H0,19[20;19H[?12l[?25h[43;1H[K[20;18H[?25l[43;64H20,18[9CAll[20;18H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list2.c" 27L, 635C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c[23Gmk[33G[23Gscript part06[23Gmk list2.c[K[23Gvi[33G[23G[Kls
+[0m[01;32mlist1[0m    list2.c  malloc.c  part01  part03  part05  [01;34mRCS[0m     uninit.c
+list1.c  [01;32mmalloc[0m   [01;32mmk[0m        part02  part04  part06  [01;32muninit[0m
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list1.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list1.c" 26L, 615C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[15;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[16;6H assert (node != [31mNULL[m);[17;6H node->word = argv[argi];[18;6H node->link = head;[19;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[22;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[23;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H1,1[11CAll[1;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5,0-1[5;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H5,1[11CAll[5;1H[?12l[?25h[?25l@[43;66H2[5;2H[?12l[?25h[?25l[5;1H[K[43;66H1[5;1H[?12l[?25h[?25l#[43;66H2[5;2H[?12l[?25h[?25l#i[43;66H3[5;3H[?12l[?25h[?25lin[43;66H4[5;4H[?12l[?25h[?25lnc[43;66H5[5;5H[?12l[?25h[?25lcl[43;66H6[5;6H[?12l[?25h[?25llu[43;66H7[5;7H[?12l[?25h[?25lud[43;66H8[5;8H[?12l[?25h[?25lde[43;66H9[5;9H[?12l[?25h[?25l[35m#include<[m[43;66H10[5;10H[?12l[?25h[?25l#include[5;9H[K[43;66H9 [5;9H[?12l[?25h[?25l[43;66H10[5;10H[?12l[?25h[?25l[35m#include <[m[43;67H1[5;11H[?12l[?25h[?25l[35m<[ms[43;67H2[5;12H[?12l[?25h[?25lst[43;67H3[5;13H[?12l[?25h[?25ltd[43;67H4[5;14H[?12l[?25h[?25ld.[43;67H5[5;15H[?12l[?25h[?25l.l[43;67H6[5;16H[?12l[?25h[?25lli[43;67H7[5;17H[?12l[?25h[?25lib[43;67H8[5;18H[?12l[?25h[?25l[5;17H[K[43;67H7[5;17H[?12l[?25h[?25l[5;16H[K[43;67H6[5;16H[?12l[?25h[?25l[5;15H[K[43;67H5[5;15H[?12l[?25h[?25l[5;14H[K[43;67H4[5;14H[?12l[?25h[?25ldl[43;67H5[5;15H[?12l[?25h[?25lli[43;67H6[5;16H[?12l[?25h[?25lis[43;67H7[5;17H[?12l[?25h[?25l[5;16H[K[43;67H6[5;16H[?12l[?25h[?25lib[43;67H7[5;17H[?12l[?25h[?25lb.[43;67H8[5;18H[?12l[?25h[?25l.h[43;67H9[5;19H[?12l[?25h[?25lh?[6;25H[1m[37m[41m;[7;13H{[8;14H;[9;14H;
+};[12;34H{[13;14H;[14;41H{[15;49H;[16;28H;[17;30H;[18;24H;[19;18H;
+[m   [1m[37m[41m}[21;67H{[23;56H;
+[m   [1m[37m[41m}[25;12H;
+}[m[43;66H20[5;20H[?12l[?25h[?25l[5;19H[K[6;25H;[7;13H{[8;14H;[9;14H;
+};[12;34H{[13;14H;[14;41H{[15;49H;[16;28H;[17;30H;[18;24H;[19;18H;
+   }[21;67H{[23;56H;
+   }[25;12H;
+}[43;66H19[5;19H[?12l[?25h[?25l[5;10H[31m<stdlib.h>[m[43;66H20[5;20H[?12l[?25h[43;1H[K[5;19H[?25l[43;64H5,19[10CAll[5;19H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list1.c" 26L, 634C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list1.c[23Gls[Kvi list2.c[23Gmk[33G
+mk: line 1: Script: command not found
+mk: line 2: syntax error near unexpected token `('
+mk: line 2: `You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.'
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi mk
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"mk" 68L, 3220C[>c[1;1HScript started on Tue 05 Nov 2013 04:29:22 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M
+^[[m]0;asilva3@unix2:lab5[34m^G[m[asilva3@unix2 lab5]$ mk unit[34m^H^[[m[Knit.c[34m^M^M[m
+mk: Text file busy.[34m^M
+^[[m]0;asilva3@unix2:lab5[34m^G[m[asilva3@unix2 lab5]$ valgrind uninit[34m^M^M[m
+==21072== Memcheck, a memory error detector[34m^M[m
+==21072== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.[34m^M[m
+==21072== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info[34m^M[m
+==21072== Command: uninit[34m^M[m
+==21072== [34m^M[m
+==21072== Use of uninitialised value of size 8[34m^M[m
+==21072==    at 0x3C0E043D5B: _itoa_word (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x3C0E046912: vfprintf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x3C0E04F449: printf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x400519: main (uninit.c:8)[34m^M[m
+==21072== [34m^M[m
+==21072== Conditional jump or move depends on uninitialised value(s)[34m^M[m
+==21072==    at 0x3C0E043D65: _itoa_word (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x3C0E046912: vfprintf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x3C0E04F449: printf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x400519: main (uninit.c:8)[34m^M[m
+==21072== [34m^M[m
+==21072== Conditional jump or move depends on uninitialised value(s)[34m^M[m
+==21072==    at 0x3C0E0453A3: vfprintf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x3C0E04F449: printf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x400519: main (uninit.c:8)[34m^M[m
+==21072== [34m^M[m
+==21072== Conditional jump or move depends on uninitialised value(s)[34m^M[m
+==21072==    at 0x3C0E0453C1: vfprintf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x3C0E04F449: printf (in /lib64/libc-2.12.so)[34m^M[m
+==21072==    by 0x400519: main (uninit.c:8)[34m^M[m
+==21072== [34m^M[m
+7[34m^M[m
+==21072== Use of uninitialised value of size 8[34m^M[m
+==21072==    at 0x40051E: main (uninit.c:10)[34m^M[m
+==21072== [34m^M[m
+==21072== Invalid read of size 4[34m^M[m
+==21072==    at 0x40051E: main (uninit.c:10)[34m^M[m
+==21072==  Address 0x0 is not stack'd, malloc'd or (recently) free'd[34m^M[m
+==21072== [34m^M[m
+==21072== [34m^M[m
+==21072== Process terminating with default action of signal 11 (SIGSEGV)[34m^M[m[43;64H1,1[11CTop[1;1H[?12l[?25h[?25l[43;64H2[2;1H[?12l[?25h[?25l[43;64H1[1;1H[?12l[?25h[?25l[43;64H2[2;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H9[9;1H[?12l[?25h[?25l[43;64H10,1[10;1H[?12l[?25h[?25l[43;65H1[11;1H[?12l[?25h[?25l[43;65H2[12;1H[?12l[?25h[?25l[43;65H3[13;1H[?12l[?25h[?25l[43;65H4[14;1H[?12l[?25h[?25l[43;65H5[15;1H[?12l[?25h[?25l[43;65H6[16;1H[?12l[?25h[?25l[43;65H7[17;1H[?12l[?25h[?25l[43;65H8[18;1H[?12l[?25h[?25l[43;65H9[19;1H[?12l[?25h[?25l[43;64H20[20;1H[?12l[?25h[?25l[43;65H1[21;1H[?12l[?25h[?25l[43;65H2[22;1H[?12l[?25h[?25l[43;65H3[23;1H[?12l[?25h[?25l[43;65H4[24;1H[?12l[?25h[?25l[43;65H5[25;1H[?12l[?25h[?25l[43;65H6[26;1H[?12l[?25h[?25l[43;65H7[27;1H[?12l[?25h[?25l[43;65H8[28;1H[?12l[?25h[?25l[43;65H9[29;1H[?12l[?25h[?25l[43;64H30[30;1H[?12l[?25h[?25l[43;65H1[31;1H[?12l[?25h[?25l[43;65H2[32;1H[?12l[?25h[?25l[43;65H3[33;1H[?12l[?25h[?25l[43;65H4[34;1H[?12l[?25h[?25l[43;65H5[35;1H[?12l[?25h[?25l[43;65H6[36;1H[?12l[?25h[?25l[43;65H7[37;1H[?12l[?25h[?25l[43;65H8[38;1H[?12l[?25h[?25l[43;65H9[39;1H[?12l[?25h[?25l[43;64H40[40;1H[?12l[?25h[?25l[43;65H1[41;1H[?12l[?25h[?25l[43;65H2[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==  Access not within mapped region at address 0x0[34m^M[m[43;1H[K[43;64H43,1[11C3%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==    at 0x40051E: main (uninit.c:10)[34m^M[m[43;64H[K[43;64H44,1[11C7%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==  If you believe this happened as a result of a stack[34m^M[m[43;64H[K[43;64H45,1[10C11%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==  overflow in your program's main thread (unlikely but[34m^M[m[43;64H[K[43;64H46,1[10C15%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==  possible), you can try to increase the size of the[34m^M[m[43;64H[K[43;64H47,1[10C19%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==  main thread stack using the --main-stacksize= flag.[34m^M[m[43;64H[K[43;64H48,1[10C23%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==  The main thread stack size used in this run was 10485760.[34m^M[m[43;64H[K[43;64H49,1[10C26%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== [34m^M[m[43;64H[K[43;64H50,1[10C30%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== HEAP SUMMARY:[34m^M[m[43;64H[K[43;64H51,1[10C34%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==     in use at exit: 0 bytes in 0 blocks[34m^M[m[43;64H[K[43;64H52,1[10C38%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated[34m^M[m[43;64H[K[43;64H53,1[10C42%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== [34m^M[m[43;64H[K[43;64H54,1[10C46%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== All heap blocks were freed -- no leaks are possible[34m^M[m[43;64H[K[43;64H55,1[10C50%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== [34m^M[m[43;64H[K[43;64H56,1[10C53%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== For counts of detected and suppressed errors, rerun with: -v[34m^M[m[43;64H[K[43;64H57,1[10C57%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== Use --track-origins=yes to see where uninitialised values come from[34m^M[m[43;64H[K[43;64H58,1[10C61%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H==21072== ERROR SUMMARY: 6 errors from 6 contexts (suppressed: 6 from 6)[34m^M[m[43;64H[K[43;64H59,1[10C65%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1HSegmentation fault (core dumped)[34m^M[m[43;64H[K[43;64H60,1[10C69%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[34m^[[m]0;asilva3@unix2:lab5[34m^G[m[asilva3@unix2 lab5]$ echo $/[34m^H^[[m[K?[34m^M^M[m[43;64H[K[43;64H61,1[10C73%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H139[34m^M[m[43;64H[K[43;64H62,1[10C76%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[34m^[[m]0;asilva3@unix2:lab5[34m^G[m[asilva3@unix2 lab5]$ pstatus 130[34m^H^[[m[K9[34m^M^M[m[43;64H[K[43;64H63,1[10C80%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1Hpstatus: 0x008B TERMINATED 11: Segmentation fault (core dumped)[34m^M[m[43;64H[K[43;64H64,1[10C84%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[34m^[[m]0;asilva3@unix2:lab5[34m^G[m[asilva3@unix2 lab5]$ exit[34m^M^M[m[43;64H[K[43;64H65,1[10C88%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1Hexit[34m^M[m[43;64H[K[43;64H66,1[10C92%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[43;64H[K[43;64H67,0-1[8C96%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1HScript done on Tue 05 Nov 2013 04:29:51 PM PST[43;64H[K[43;64H68,1[10CBot[42;1H[?12l[?25h[?25l[43;65H7,0-1[41;1H[?12l[?25h[?25l[43;65H6,1  [40;1H[?12l[?25h[?25l[43;65H5[39;1H[?12l[?25h[?25l[43;65H4[38;1H[?12l[?25h[?25l[43;65H3[37;1H[?12l[?25h[?25l[43;65H2[36;1H[?12l[?25h[?25l[43;65H1[35;1H[?12l[?25h[?25l[43;65H0[34;1H[?12l[?25h[?25l[43;64H59[33;1H[?12l[?25h[?25l[43;65H8[32;1H[?12l[?25h[?25l[43;65H7[31;1H[?12l[?25h[?25l[43;65H6[30;1H[?12l[?25h[?25l[43;65H5[29;1H[?12l[?25h[?25l[43;65H4[28;1H[?12l[?25h[?25l[43;65H3[27;1H[?12l[?25h[?25l[43;65H2[26;1H[?12l[?25h[?25l[43;65H1[25;1H[?12l[?25h[?25l[43;65H0[24;1H[?12l[?25h[?25l[43;64H49[23;1H[?12l[?25h[?25l[43;65H8[22;1H[?12l[?25h[?25l[43;65H7[21;1H[?12l[?25h[?25l[43;65H6[20;1H[?12l[?25h[?25l[43;65H5[19;1H[?12l[?25h[?25l[43;65H4[18;1H[?12l[?25h[?25l[43;65H3[17;1H[?12l[?25h[?25l[43;65H2[16;1H[?12l[?25h[?25l[43;65H1[15;1H[?12l[?25h[?25l[43;65H0[14;1H[?12l[?25h[?25l[43;64H39[13;1H[?12l[?25h[?25l[43;65H8[12;1H[?12l[?25h[?25l[43;65H7[11;1H[?12l[?25h[?25l[43;65H6[10;1H[?12l[?25h[?25l[43;65H5[9;1H[?12l[?25h[?25l[43;65H4[8;1H[?12l[?25h[?25l[43;65H3[7;1H[?12l[?25h[?25l[43;65H2[6;1H[?12l[?25h[?25l[43;65H1[5;1H[?12l[?25h[?25l[43;65H0[4;1H[?12l[?25h[?25l[43;64H29[3;1H[?12l[?25h[?25l[43;65H8[2;1H[?12l[?25h[?25l[43;65H7[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x400519: main (uninit.c:8)[34m^M[m[43;64H[K[43;64H26,1[10C96%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x3C0E04F449: printf (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H25,1[10C92%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    at 0x3C0E0453A3: vfprintf (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H24,1[10C88%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== Conditional jump or move depends on uninitialised value(s)[34m^M[m[43;64H[K[43;64H23,1[10C84%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== [34m^M[m[43;64H[K[43;64H22,1[10C80%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x400519: main (uninit.c:8)[34m^M[m[43;64H[K[43;64H21,1[10C76%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x3C0E04F449: printf (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H20,1[10C73%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x3C0E046912: vfprintf (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H19,1[10C69%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    at 0x3C0E043D65: _itoa_word (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H18,1[10C65%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== Conditional jump or move depends on uninitialised value(s)[34m^M[m[43;64H[K[43;64H17,1[10C61%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== [34m^M[m[43;64H[K[43;64H16,1[10C57%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x400519: main (uninit.c:8)[34m^M[m[43;64H[K[43;64H15,1[10C53%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x3C0E04F449: printf (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H14,1[10C50%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    by 0x3C0E046912: vfprintf (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H13,1[10C46%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072==    at 0x3C0E043D5B: _itoa_word (in /lib64/libc-2.12.so)[34m^M[m[43;64H[K[43;64H12,1[10C42%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== Use of uninitialised value of size 8[34m^M[m[43;64H[K[43;64H11,1[10C38%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== [34m^M[m[43;64H[K[43;64H10,1[10C34%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== Command: uninit[34m^M[m[43;64H[K[43;64H9,1[11C30%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info[34m^M[m[43;64H[K[43;64H8,1[11C26%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.[34m^M[m[43;64H[K[43;64H7,1[11C23%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H==21072== Memcheck, a memory error detector[34m^M[m[43;64H[K[43;64H6,1[11C19%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H[34m^[[m]0;asilva3@unix2:lab5[34m^G[m[asilva3@unix2 lab5]$ valgrind uninit[34m^M^M[m[43;64H[K[43;64H5,1[11C15%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1Hmk: Text file busy.[34m^M[m[43;64H[K[43;64H4,1[11C11%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1H[34m^[[m]0;asilva3@unix2:lab5[34m^G[m[asilva3@unix2 lab5]$ mk unit[34m^H^[[m[Knit.c[34m^M^M[m[43;64H[K[43;64H3,1[12C7%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1HYou are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M[m[43;64H[K[43;64H2,1[12C3%[1;1H[?12l[?25h[?25l[1;42r[1;1H[L[1;43r[1;1HScript started on Tue 05 Nov 2013 04:29:22 PM PST[43;64H[K[43;64H1,1[11CTop[1;1H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ /afs/cats.ucsc.edu/courses/cmps012b=w[K[K-wm
+/afs/cats.ucsc.edu/courses/cmps012b-wm: Permission denied.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ cd /asf[K[Kfsc[K/catsi[K/i[K[K.ucsc.edu/courses/cmps012b-wm
+]0;asilva3@unix1:cmps012b-wm[asilva3@unix1 cmps012b-wm]$ ls
+[0m[01;34madminbin[0m       [01;34mOld-Exams[0m                       Readme.new.cmps012b.txt
+[01;34mAssignments[0m    proquest.safaribooksonline.com  [01;34mreg.ucsc.edu.soc[0m
+[01;34mbin[0m            [01;34mpublic_html[0m                     [01;34mSyllabus[0m
+[01;34mCoding-style[0m   [01;34mRCS[0m                             [01;34mTA[0m
+[01;34mDownloads[0m      Readme.all.cmps012b.html        [01;34mtest-xpdf[0m
+[01;34metc[0m            Readme.all.cmps012b.pdf         [01;34mTutorials[0m
+[01;34mExamples[0m       Readme.all.cmps012b.ps          [01;34mUnix-Style[0m
+[01;34mgroff[0m          Readme.all.cmps012b.txt         [01;36mUnix-Tutorial[0m
+HEADER.cat     [01;36mREADME.cat[0m                      [01;34musr[0m
+HEADER.html    [01;36mREADME.html[0m                     [01;32mvireadme[0m
+[01;34mJargon-File[0m    Readme.new.cmps012b.html        [01;32mwhen[0m
+[01;34mLabs-cmps012m[0m  Readme.new.cmps012b.pdf
+[01;34mlinks[0m          Readme.new.cmps012b.ps
+[m]0;asilva3@unix1:cmps012b-wm[asilva3@unix1 cmps012b-wm]$ cd l[KLabs-cmps012m/
+]0;asilva3@unix1:Labs-cmps012m[asilva3@unix1 Labs-cmps012m]$ ls
+[0m[01;34mlab1u-gmake-rcs[0m       [01;34mlab4c-stdio-getopt[0m  [01;34mlab7c-headers-adts[0m
+[01;34mlab2u-unix-shells[0m     [01;34mlab5c-gdb-valgrind[0m  [01;34mlab8c-unixprog-stat[0m
+[01;34mlab3c-rpnstack-array[0m  [01;34mlab6c-malloc-free[0m   [01;34mlab9c-voidstar-generic[0m
+[m]0;asilva3@unix1:Labs-cmps012m[asilva3@unix1 Labs-cmps012m]$ cd lab4[K5c-gdb-valgrind/
+]0;asilva3@unix1:lab5c-gdb-valgrind[asilva3@unix1 lab5c-gdb-valgrind]$ ls
+[0m[01;34mcode[0m           lab5c-gdb-valgrind.mm   lab5c-gdb-valgrind.ps  [01;36mMakefile[0m
+[01;34mgdb-tutorials[0m  lab5c-gdb-valgrind.pdf  lab5c-gdb-valgrind.tt  [01;34mRCS[0m
+[m]0;asilva3@unix1:lab5c-gdb-valgrind[asilva3@unix1 lab5c-gdb-valgrind]$ cd code
+]0;asilva3@unix1:code[asilva3@unix1 code]$ ls
+[0m[01;32mlist1[0m  list1.c  [01;32mmalloc[0m  malloc.c  [01;32mmk[0m  [01;34mRCS[0m  [01;32muninit[0m  uninit.c
+[m]0;asilva3@unix1:code[asilva3@unix1 code]$ cp mk ~/private/cmps012b/lab5
+]0;asilva3@unix1:code[asilva3@unix1 code]$ ~/[K[Kcd ~/private/cmps012b/lab5
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ ls
+[0m[01;32mlist1[0m    list2.c  malloc.c  part01  part03  part05  [01;34mRCS[0m     uninit.c
+list1.c  [01;32mmalloc[0m   [01;32mmk[0m        part02  part04  part06  [01;32muninit[0m
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ cd [K[Kvi mk
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"mk" 23L, 667C[>c[1;1H[34m#!/bin/sh
+# $Id: mk,v 1.5 2013-02-08 18:01:20-08 - - $
+#
+# This script takes the names of C source [m[30m[43mfiles[m[34m and compiles them
+# into executable images.  Each source must be a complete program.
+#[m
+[33mexport[m[36m PATH[m[33m=[m[35m$PATH[m:/afs/cats.ucsc.edu/courses/cmps012b-wm/bin
+[33mfor [mCSOURCE [33min[m [35m$*[m
+[33mdo[m
+   [36mEXECBIN[m=[35m${CSOURCE[m[1m[37m[41m%.c[m[35m}[m
+   [33mif [[m [33m"[m[35m$CSOURCE[m[33m"[m [33m==[m [31m"$EXECBIN"[m [33m][m
+   [33mthen[m[13;6H [33mecho[m[31m [m[35m$0[m[31m: [m[35m$CSOURCE[m[31m: is not a C source file[m
+   [33melse[m[15;6H [33mecho[m[31m CSOURCE=[m[35m$CSOURCE[m[31m EXECBIN=[m[35m$EXECBIN[m[16;6H [33mset[m[36m [m[35m-x[m[17;6H cid + [35m$CSOURCE[m[18;6H checksource [35m$CSOURCE[m[19;6H gcc [33m-g[m -O0 -Wall -Wextra -[36mstd[m=gnu99 [35m$CSOURCE[m [33m-o[m [35m$EXECBIN[m -lm[20;6H [33mset[m[36m [m[35m+x[m[21;6H [33mecho[m[31m ============================================================[m
+   [33mfi
+done[m
+[1m[34m~                                                                                [25;1H~                                                                                [26;1H~                                                                                [27;1H~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H1,1[11CAll[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi mk[23G[Kvi mk[23Gls[Kcd ~/private/cmps012b/lab5[24G[3@p mk[52G[24Gd code[Klab5c-gdb-valgrind/[26GLabs-cmps012m/[K[26G/afs/cats.ucsc.edu/courses/cmps012b-wm[23G[3P[61G[23Gmk list2.c[K[23Gvi list1.c[23Gmk list2.c
+CSOURCE=list2.c EXECBIN=list2
++ cid + list2.c
++ checksource list2.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list2.c -o list2 -lm
+list2.c: In function ‘main’:
+list2.c:13: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list1.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list1.c" 26L, 634C[>c[1;1H[34m// $Id: list1.c,v 1.3 2013-02-08 18:00:41-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[15;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[16;6H assert (node != [31mNULL[m);[17;6H node->word = argv[argi];[18;6H node->link = head;[19;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[22;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[23;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [28;1H~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H5,1[11CAll[5;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H5,1[11CAll[5;1H[?12l[?25h[?25l[43;66H2[5;2H[?12l[?25h[?25l[43;66H3[5;3H[?12l[?25h[?25l[43;66H4[5;4H[?12l[?25h[?25l[43;66H5[5;5H[?12l[?25h[?25l[43;66H6[5;6H[?12l[?25h[?25l[43;66H7[5;7H[?12l[?25h[?25l[43;66H8[5;8H[?12l[?25h[?25l[43;66H9[5;9H[?12l[?25h[?25l[43;66H10[5;10H[?12l[?25h[?25l[43;67H1[5;11H[?12l[?25h[?25l[43;67H2[5;12H[?12l[?25h[?25l[43;67H3[5;13H[?12l[?25h[?25l[43;67H4[5;14H[?12l[?25h[?25l[43;67H5[5;15H[?12l[?25h[?25l[43;67H6[5;16H[?12l[?25h[?25l[43;67H7[5;17H[?12l[?25h[?25l[43;67H8[5;18H[?12l[?25h[?25l[43;67H9[5;19H[?12l[?25h[?25l[43;66H20[5;20H[?12l[?25h[?25l[5;10H[35m<[mstdlib.h[5;19H[K[43;66H19[5;19H[?12l[?25h[?25l[5;18H[K[43;67H8[5;18H[?12l[?25h[?25l[5;17H[K[43;67H7[5;17H[?12l[?25h[?25l[5;16H[K[43;67H6[5;16H[?12l[?25h[?25l[5;15H[K[43;67H5[5;15H[?12l[?25h[?25l[5;14H[K[43;67H4[5;14H[?12l[?25h[?25l[5;13H[K[43;67H3[5;13H[?12l[?25h[?25l[5;12H[K[43;67H2[5;12H[?12l[?25h[?25l[5;11H[K[43;67H1[5;11H[?12l[?25h[?25l#include [5;10H[K[43;67H0[5;10H[?12l[?25h[?25l[43;66H9 [5;9H[?12l[?25h[?25l[5;8H[K[43;66H8[5;8H[?12l[?25h[?25l[5;7H[K[43;66H7[5;7H[?12l[?25h[?25l[5;6H[K[43;66H6[5;6H[?12l[?25h[?25l[5;5H[K[43;66H5[5;5H[?12l[?25h[?25l[5;4H[K[43;66H4[5;4H[?12l[?25h[?25l[5;3H[K[43;66H3[5;3H[?12l[?25h[?25l[5;2H[K[43;66H2[5;2H[?12l[?25h[?25l[5;1H[K[43;66H1[5;1H[?12l[?25h[?25l[4;42r[42;1H
+[1;43r[4;1H[35m#include [m[31m<stdio.h>[m[42;1H[1m[34m~                                                                                [m[43;64H[K[43;64H4,19[10CAll[4;19H[?12l[?25h[43;1H[K[4;18H[?25l[43;64H4,18[10CAll[4;18H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list1.c" 25L, 614C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list1.c[23Gmk list2.c[23Gvi list1.c[23G[Kmk list.c[K[K1.c
+CSOURCE=list1.c EXECBIN=list1
++ cid + list1.c
++ checksource list1.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list1.c -o list1 -lm
+list1.c: In function ‘main’:
+list1.c:14: warning: implicit declaration of function ‘malloc’
+list1.c:14: warning: incompatible implicit declaration of built-in function ‘malloc’
+list1.c:11: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ script part05
+Script started, file is part05
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list1.c
+CSOURCE=list1.c EXECBIN=list1
++ cid + list1.c
++ checksource list1.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list1.c -o list1 -lm
+list1.c: In function ‘main’:
+list1.c:14: warning: implicit declaration of function ‘malloc’
+list1.c:14: warning: incompatible implicit declaration of built-in function ‘malloc’
+list1.c:11: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+Script done, file is part05
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ script part06 
+Script started, file is part06
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list2.c
+CSOURCE=list2.c EXECBIN=list2
++ cid + list2.c
++ checksource list2.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list2.c -o list2 -lm
+list2.c: In function ‘main’:
+list2.c:13: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list2.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list2.c" 27L, 635C[>c[1;1H[34m// $Id: list2.c,v 1.1 2013-11-05 20:37:53-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[16;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[17;6H assert (node != [31mNULL[m);[18;6H node->word = argv[argi];[19;6H node->link = head;[20;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[23;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[24;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H20,7[10CAll[20;7H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list[K[K[K[K[K[Kgd[Kb[Kdb list2
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list2...done.
+(gdb) run foo bar
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list2 foo bar
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+0x601090->node {word=0x7fffffffe4c4->[USER=asilva3], link=0x601070}
+0x601070->node {word=(nil)->[(null)], link=0x601050}
+0x601050->node {word=0x7fffffffe4c0->[bar], link=0x601030}
+0x601030->node {word=0x7fffffffe4bc->[foo], link=0x601010}
+0x601010->node {word=0x7fffffffe47d->[/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list2], link=0x3710e0fb88}
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_64
+(gdb) where
+#0  0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+#1  0x0000003710e4f44a in printf () from /lib64/libc.so.6
+#2  0x000000000040064c in main (argc=3, argv=0x7fffffffe1c8) at list2.c:23
+(gdb) list
+6	
+7	typedef struct node node;
+8	struct node {
+9	   char *word;
+10	   node *link;
+11	};
+12	
+13	int main (int argc, char **argv) {
+14	   node *head;
+15	   for (int argi = 0; argi < 5; ++argi) {
+(gdb) list2.c:23
+Undefined command: "list2".  Try "help".
+(gdb) list list2.c:23
+18	      node->word = argv[argi];
+19	      node->link = head;
+20	      head = node;
+21	   }
+22	   for (node *curr = head; curr->link != NULL; curr = curr->link) {
+23	      printf ("%p->node {word=%p->[%s], link=%p}\n",
+24	              curr, curr->word, curr->word, curr->link);
+25	   }
+26	   return 9;
+27	}
+(gdb) print head
+No symbol "head" in current context.
+(gdb) bt
+#0  0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+#1  0x0000003710e4f44a in printf () from /lib64/libc.so.6
+#2  0x000000000040064c in main (argc=3, argv=0x7fffffffe1c8) at list2.c:23
+(gdb) up
+#1  0x0000003710e4f44a in printf () from /lib64/libc.so.6
+(gdb) up
+#2  0x000000000040064c in main (argc=3, argv=0x7fffffffe1c8) at list2.c:23
+23	      printf ("%p->node {word=%p->[%s], link=%p}\n",
+(gdb) up
+Initial frame selected; you cannot go up.
+(gdb) print head
+$1 = (node *) 0x601090
+(gdb) print *head
+$2 = {word = 0x7fffffffe4c4 "USER=asilva3", link = 0x601070}
+(gdb) print *(head->word0[K)
+$3 = 85 'U'
+(gdb) print head->link->link->link
+$4 = (node *) 0x601030
+(gdb) print *(head->link->link->link([K)
+$5 = {word = 0x7fffffffe4bc "foo", link = 0x601010}
+(gdb) exit
+Undefined command: "exit".  Try "help".
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 23450] will be killed.
+
+Quit anyway? (y or n) y
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ scrpit 07[K[Kpart07[Pi[1@pt part
+Script started, file is part07
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ d[Kgdb list2
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list2...done.
+(gdb) break main
+Breakpoint 1 at 0x4005a4: file list2.c, line 15.
+(gdb) run foo bar
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list2 foo bar
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+
+Breakpoint 1, main (argc=3, argv=0x7fffffffe178) at list2.c:15
+15	   for (int argi = 0; argi < 5; ++argi) {
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_64
+(gdb) pa[Krint argc
+$1 = 3
+(gdb) print argv
+$2 = (char **) 0x7fffffffe178
+(gdb) par[K[Krint argv[0]
+$3 = 0x7fffffffe428 "/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list2"
+(gdb) print argv[1]
+$4 = 0x7fffffffe467 "foo"
+(gdb) print argv[2]
+$5 = 0x7fffffffe46b "bar"
+(gdb) print argv[3]
+$6 = 0x0
+(gdb) print argv [4][K[K[K[K[4]
+$7 = 0x7fffffffe46f "USER=asilva3"
+(gdb) print argv[5]
+$8 = 0x7fffffffe47c "LOGNAME=asilva3"
+(gdb) print argv[6]
+$9 = 0x7fffffffe48c "HOME=/afs/cats.ucsc.edu/users/g/asilva3"
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 24866] will be killed.
+
+Quit anyway? (y or n) y
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ scrpi[K[Kipt part08
+Script started, file is part08
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind -- lea[K[K[Kleak -chea[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcp list2.c list3.c
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind --leak-check=full \list3 foo bar barz[K[Kz qux
+valgrind: list3: command not found
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ quit
+quit: Command not found.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+Script done, file is part08
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ clear
+[H[2J]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ cp list2.c list3.c
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ script part08
+Script started, file is part08
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind --leak-checkl=[K[K=full[K-[K=[K[K[K[K[K=full\list[K[K[K[K list3 foo bar baz qus[Kx
+valgrind: foo: command not found
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind -- lea[K[K[Kleak -check = f[Kf[Kfi[Kull \ list foo bar baz qux
+valgrind:  list: command not found
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind --leak -check=ful\[K \ list3 foo bar baz qux
+valgrind:  list3: command not found
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list.c[K[K3.c
+CSOURCE=list3.c EXECBIN=list3
++ cid + list3.c
++ checksource list3.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list3.c -o list3 -lm
+list3.c: In function ‘main’:
+list3.c:13: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind --leak-check=ful \[Kl \ list3 foo bar baz qux
+valgrind:  list3: command not found
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ val g[Kgrind ==[K[K--leak [Kk-check=full\ [1@0[Pnd [1@ [1@.[1@\[1@u[1@n[1@i[1@n[1@i[1@t --leak-check=full\ [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kvalgind unit[K[K[K[Klist3.c
+valgind: Command not found.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind list3.c
+valgrind: ./list3.c: Permission denied
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list3.c
+CSOURCE=list3.c EXECBIN=list3
++ cid + list3.c
++ checksource list3.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list3.c -o list3 -lm
+list3.c: In function ‘main’:
+list3.c:13: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind list3.c
+valgrind: ./list3.c: Permission denied
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ ehco[K[K[Kcho #[K$/[K?
+126
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ pstatus 13[K[K26[K[K126
+pstatus: 0x007E TERMINATED 126: Unknown signal 126
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list3/c[K[K[K[K[K[K[K[K[Kls
+[0m[01;32mlist1[0m    list2.c  [01;32mmalloc[0m    part01  part04  part07  [01;32muninit[0m
+list1.c  [01;32mlist3[0m    malloc.c  part02  part05  part08  uninit.c
+[01;32mlist2[0m    list3.c  [01;32mmk[0m        part03  part06  [01;34mRCS[0m
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list3.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list3.c" 27L, 635C[>c[1;1H[34m// $Id: list3.c,v 1.1 2013-11-05 20:54:10-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[16;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[17;6H assert (node != [31mNULL[m);[18;6H node->word = argv[argi];[19;6H node->link = head;[20;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[23;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[24;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H1,1[11CAll[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list3.c
+CSOURCE=list3.c EXECBIN=list3
++ cid + list3.c
++ checksource list3.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list3.c -o list3 -lm
+list3.c: In function ‘main’:
+list3.c:13: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind list3
+==26462== Memcheck, a memory error detector
+==26462== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==26462== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==26462== Command: list3
+==26462== 
+0x4c27180->node {word=0x7ff000456->[HOME=/afs/cats.ucsc.edu/users/g/asilva3], link=0x4c27130}
+0x4c27130->node {word=0x7ff000446->[LOGNAME=asilva3], link=0x4c270e0}
+0x4c270e0->node {word=0x7ff000439->[USER=asilva3], link=0x4c27090}
+0x4c27090->node {word=(nil)->[(null)], link=0x4c27040}
+==26462== Conditional jump or move depends on uninitialised value(s)
+==26462==    at 0x400663: main (list3.c:22)
+==26462== 
+==26462== Conditional jump or move depends on uninitialised value(s)
+==26462==    at 0x3710E45948: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+==26462== 
+==26462== Use of uninitialised value of size 8
+==26462==    at 0x3710E43D01: _itoa_word (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E46912: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+==26462== 
+==26462== Conditional jump or move depends on uninitialised value(s)
+==26462==    at 0x3710E43D08: _itoa_word (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E46912: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+==26462== 
+==26462== Conditional jump or move depends on uninitialised value(s)
+==26462==    at 0x3710E4697D: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+==26462== 
+==26462== Conditional jump or move depends on uninitialised value(s)
+==26462==    at 0x3710E45385: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+==26462== 
+==26462== Conditional jump or move depends on uninitialised value(s)
+==26462==    at 0x3710E453FD: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+==26462== 
+0x4c27040->node {word=0x7ff000433->[list3], link=0x3710e0fb88}
+==26462== Use of uninitialised value of size 8
+==26462==    at 0x40065C: main (list3.c:22)
+==26462== 
+==26462== Use of uninitialised value of size 8
+==26462==    at 0x40061E: main (list3.c:23)
+==26462== 
+==26462== Use of uninitialised value of size 8
+==26462==    at 0x400626: main (list3.c:23)
+==26462== 
+==26462== Use of uninitialised value of size 8
+==26462==    at 0x40062D: main (list3.c:23)
+==26462== 
+==26462== Invalid read of size 1
+==26462==    at 0x3710E480EC: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+==26462==  Address 0xc0012000029d5 is not stack'd, malloc'd or (recently) free'd
+==26462== 
+==26462== 
+==26462== Process terminating with default action of signal 11 (SIGSEGV)
+==26462==  General Protection Fault
+==26462==    at 0x3710E480EC: vfprintf (in /lib64/libc-2.12.so)
+==26462==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==26462==    by 0x40064B: main (list3.c:23)
+0x3710e0fb88->node {word=0xc0012000029d5->[==26462== 
+==26462== HEAP SUMMARY:
+==26462==     in use at exit: 80 bytes in 5 blocks
+==26462==   total heap usage: 5 allocs, 0 frees, 80 bytes allocated
+==26462== 
+==26462== LEAK SUMMARY:
+==26462==    definitely lost: 0 bytes in 0 blocks
+==26462==    indirectly lost: 0 bytes in 0 blocks
+==26462==      possibly lost: 0 bytes in 0 blocks
+==26462==    still reachable: 80 bytes in 5 blocks
+==26462==         suppressed: 0 bytes in 0 blocks
+==26462== Rerun with --leak-check=full to see details of leaked memory
+==26462== 
+==26462== For counts of detected and suppressed errors, rerun with: -v
+==26462== Use --track-origins=yes to see where uninitialised values come from
+==26462== ERROR SUMMARY: 54 errors from 12 contexts (suppressed: 6 from 6)
+Segmentation fault (core dumped)
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ gdb list3
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3...done.
+(gdb) run
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3 
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+0x601090->node {word=0x7fffffffe437->[HOME=/afs/cats.ucsc.edu/users/g/asilva3], link=0x601070}
+0x601070->node {word=0x7fffffffe427->[LOGNAME=asilva3], link=0x601050}
+0x601050->node {word=0x7fffffffe41a->[USER=asilva3], link=0x601030}
+0x601030->node {word=(nil)->[(null)], link=0x601010}
+0x601010->node {word=0x7fffffffe3db->[/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3], link=0x3710e0fb88}
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_64
+(gdb) where
+#0  0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+#1  0x0000003710e4f44a in printf () from /lib64/libc.so.6
+#2  0x000000000040064c in main (argc=1, argv=0x7fffffffe138) at list3.c:23
+(gdb) list
+6	
+7	typedef struct node node;
+8	struct node {
+9	   char *word;
+10	   node *link;
+11	};
+12	
+13	int main (int argc, char **argv) {
+14	   node *head;
+15	   for (int argi = 0; argi < 5; ++argi) {
+(gdb) print foo
+No symbol "foo" in current context.
+(gdb) print pointer
+No symbol "pointer" in current context.
+(gdb) print *pointer
+No symbol "pointer" in current context.
+(gdb) print argv[0]
+No symbol "argv" in current context.
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 26812] will be killed.
+
+Quit anyway? (y or n) y
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list3
+mk: list3: is not a C source file
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list3.c
+CSOURCE=list3.c EXECBIN=list3
++ cid + list3.c
++ checksource list3.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list3.c -o list3 -lm
+list3.c: In function ‘main’:
+list3.c:13: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind list3
+==28162== Memcheck, a memory error detector
+==28162== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==28162== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==28162== Command: list3
+==28162== 
+0x4c27180->node {word=0x7ff000456->[HOME=/afs/cats.ucsc.edu/users/g/asilva3], link=0x4c27130}
+0x4c27130->node {word=0x7ff000446->[LOGNAME=asilva3], link=0x4c270e0}
+0x4c270e0->node {word=0x7ff000439->[USER=asilva3], link=0x4c27090}
+0x4c27090->node {word=(nil)->[(null)], link=0x4c27040}
+==28162== Conditional jump or move depends on uninitialised value(s)
+==28162==    at 0x400663: main (list3.c:22)
+==28162== 
+==28162== Conditional jump or move depends on uninitialised value(s)
+==28162==    at 0x3710E45948: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+==28162== 
+==28162== Use of uninitialised value of size 8
+==28162==    at 0x3710E43D01: _itoa_word (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E46912: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+==28162== 
+==28162== Conditional jump or move depends on uninitialised value(s)
+==28162==    at 0x3710E43D08: _itoa_word (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E46912: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+==28162== 
+==28162== Conditional jump or move depends on uninitialised value(s)
+==28162==    at 0x3710E4697D: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+==28162== 
+==28162== Conditional jump or move depends on uninitialised value(s)
+==28162==    at 0x3710E45385: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+==28162== 
+==28162== Conditional jump or move depends on uninitialised value(s)
+==28162==    at 0x3710E453FD: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+==28162== 
+0x4c27040->node {word=0x7ff000433->[list3], link=0x3710e0fb88}
+==28162== Use of uninitialised value of size 8
+==28162==    at 0x40065C: main (list3.c:22)
+==28162== 
+==28162== Use of uninitialised value of size 8
+==28162==    at 0x40061E: main (list3.c:23)
+==28162== 
+==28162== Use of uninitialised value of size 8
+==28162==    at 0x400626: main (list3.c:23)
+==28162== 
+==28162== Use of uninitialised value of size 8
+==28162==    at 0x40062D: main (list3.c:23)
+==28162== 
+==28162== Invalid read of size 1
+==28162==    at 0x3710E480EC: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+==28162==  Address 0xc0012000029d5 is not stack'd, malloc'd or (recently) free'd
+==28162== 
+==28162== 
+==28162== Process terminating with default action of signal 11 (SIGSEGV)
+==28162==  General Protection Fault
+==28162==    at 0x3710E480EC: vfprintf (in /lib64/libc-2.12.so)
+==28162==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==28162==    by 0x40064B: main (list3.c:23)
+0x3710e0fb88->node {word=0xc0012000029d5->[==28162== 
+==28162== HEAP SUMMARY:
+==28162==     in use at exit: 80 bytes in 5 blocks
+==28162==   total heap usage: 5 allocs, 0 frees, 80 bytes allocated
+==28162== 
+==28162== LEAK SUMMARY:
+==28162==    definitely lost: 0 bytes in 0 blocks
+==28162==    indirectly lost: 0 bytes in 0 blocks
+==28162==      possibly lost: 0 bytes in 0 blocks
+==28162==    still reachable: 80 bytes in 5 blocks
+==28162==         suppressed: 0 bytes in 0 blocks
+==28162== Rerun with --leak-check=full to see details of leaked memory
+==28162== 
+==28162== For counts of detected and suppressed errors, rerun with: -v
+==28162== Use --track-origins=yes to see where uninitialised values come from
+==28162== ERROR SUMMARY: 54 errors from 12 contexts (suppressed: 6 from 6)
+Segmentation fault (core dumped)
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ gdb list3
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3...done.
+(gdb) run
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3 
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+0x601090->node {word=0x7fffffffe437->[HOME=/afs/cats.ucsc.edu/users/g/asilva3], link=0x601070}
+0x601070->node {word=0x7fffffffe427->[LOGNAME=asilva3], link=0x601050}
+0x601050->node {word=0x7fffffffe41a->[USER=asilva3], link=0x601030}
+0x601030->node {word=(nil)->[(null)], link=0x601010}
+0x601010->node {word=0x7fffffffe3db->[/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3], link=0x3710e0fb88}
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_64
+(gdb) where
+#0  0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+#1  0x0000003710e4f44a in printf () from /lib64/libc.so.6
+#2  0x000000000040064c in main (argc=1, argv=0x7fffffffe138) at list3.c:23
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 28799] will be killed.
+
+Quit anyway? (y or n) y
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ submit cmps012b-wm.f13 lab5 [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kls
+[0m[01;32mlist1[0m    list2.c  [01;32mmalloc[0m    part01  part04  part07  [01;32muninit[0m
+list1.c  [01;32mlist3[0m    malloc.c  part02  part05  part08  uninit.c
+[01;32mlist2[0m    list3.c  [01;32mmk[0m        part03  part06  [01;34mRCS[0m
+[m]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ c[Ksubnmit[K[K[K[Kmit cmps012b=[K-wm.f13 lab5 part01 part02 part03 part05[K4 par t05 part 06 part07
+
+submit: ERROR: nonexistent or unreadable File(s) specified (part 06).
+Please specify valid files to submit.
+
+Usage: submit Class.Qtr Assignment Filename...
+Usage: submit -m
+'submit -m' will display the documentation
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi part06
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part06" [noeol] 525L, 28672C[>c[1;1HScript started on Tue 05 Nov 2013 08:41:01 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ mk list2.c[34m^M^M[m
+CSOURCE=list2.c EXECBIN=list2[34m^M[m
++ cid + list2.c[34m^M[m
++ checksource list2.c[34m^M[m
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list2.c -o list2 -lm[34m^M[m
+list2.c: In function ‘main’:[34m^M[m
+list2.c:13: warning: unused parameter ‘argc’[34m^M[m
++ set +x[34m^M[m
+============================================================[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ vi list2.c[34m^M^M
+^[[m[?1049h[34m^[[m[?1h[34m^[[m=[34m^[[m[1;43r[34m^[[m[?12;25h[34m^[[m[?12l[34m^[[m[?25h[34m^[[m[27m[34m^[[m[m[34m^[[m[H[34m^[[m[2J[34m^[[m[?25l[34m^[[m[433[14;1H;1H"list2.c" 27L, 635C[34m^[[m[>c[34m^[[m[1;1H[34m^[[m[34m// $Id: list2.c,v 1.1 2013-11-05 20:37:533[15;1H-08 - - $[34m^[[m[m[34m^M
+^M
+^[[m[35m#include [34m^[[m[m[34m^[[m[31m<assert.h>[34m^[[m[m[34m^M
+^[[m[35m#include [34m^[[m[m[34m^[[m[31m<stdio.h>[34m^[[m[m[34m^M
+^[[m[35m#include [34m^[[m[m[34m^[[m[31m<stdlib.h>[34m^[[m[m[34m^M
+^M
+^[[m[32mtypedef[34m^[[m[m [34m^[[m[32mstruct[34m^[[m[m node node;[34m^M
+^[[m[32mstruct[34m^[[m[m node {[34m^M[m
+   [34m^[[m[32mchar[34m^[[m[m *word;[34m^M[m
+   node *link;[34m^M[m
+};[34m^M
+^M
+^[[m[32mint[34m^[[m[m main ([34m^[[m[32mint[34m^[[m[m argc, [34m^[[m[32mchar[34m^[[m[m **argv) {[34m^M[m
+   node *head;[34m^M[m
+   [34m^[[m[33mfor[34m^[[m[m ([34m^[[m[32mint[34m^[[m[m argi = [34m^[[m[31m0[34m^[[m[m; argi < [34m^[[m[31m5[34m^[[m[m; ++argi) {{[30;1H[34m^[[m[16;6H node *node = malloc ([34m^[[m[33msizeof[34m^[[m[m ([34m^[[m[32mstruct[34m^[[m[m node));[34m^[[m[17;6H  [31;1Hassert (node != [34m^[[m[31mNULL[34m^[[m[m);[34m^[[m[18;6H node->word = argv[argi];[34m^[[m[19;6H node->ll[32;1Hink = head;[34m^[[m[20;6H head = node;[34m^M[m
+   }[34m^M[m
+   [34m^[[m[33mfor[34m^[[m[m (node *curr = head; curr->link != [34m^[[m[31mNULL[34m^[[m[m; curr = curr->ll[35;1Hink) {[34m^[[m[23;6H printf ([34m^[[m[31m"[34m^[[m[m[34m^[[m[35m%p[34m^[[m[m[34m^[[m[31m->node {word=[34m^[[m[m[34m^[[m[35m%p[34m^[[m[mm[36;1H[34m^[[m[31m->[[34m^[[m[m[34m^[[m[35m%s[34m^[[m[m[34m^[[m[31m], link=[34m^[[m[m[34m^[[m[35m%p[34m^[[m[m[34m^[[m[31m}[34m^[[m[m[34m^[[m[35m\n[34m^[[m[m[34m^[[m[[[37;1H31m"[34m^[[m[m,[34m^[[m[24;14H curr, curr->word, curr->word, curr->link);[34m^M[m
+   }[34m^M[m
+   [34m^[[m[33mreturn[34m^[[m[m [34m^[[m[31m9[34m^[[m[m;[34m^M[m
+}[34m^M
+^[[m[1m[34m^[[m[34m~[68C  [42;1H [9C [34m^[[m[29;1H~[41;1H[1m[34m@                                                                                [42;1H@                                                                                [m[43;64H1,1[11CTop[1;1H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ submit cmps012b-wm .f13 lab5 part01
+Submitting the files you specified...
+copying part01
+
+1 File submitted: 
+  part01 (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ submit cmps012b-wm.f13 part02
+
+submit: ERROR: missing or incorrect Assignment (part02)
+Choose one from:
+asg3  asg4  asg5  lab5	lab6  lab7  lab8  lab9
+
+Usage: submit Class.Qtr Assignment Filename...
+Usage: submit -m
+'submit -m' will display the documentation
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ lab5
+lab5: Command not found.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ sum[Kbmit cmps012b-wm.f13 pa[K[Klab5 part02
+Submitting the files you specified...
+copying part02
+
+1 File submitted: 
+  part02 (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ c[Ksubmit cmps012b-wm.f13 p[Klab5 part03
+Submitting the files you specified...
+copying part03
+
+1 File submitted: 
+  part03 (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ submit cmps012b-wm.f13 lab5 part03[K[K[K[K[K[Kpart04
+Submitting the files you specified...
+copying part04
+
+1 File submitted: 
+  part04 (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ submit cmps012b-wm.f13 lab5 part04[K5
+Submitting the files you specified...
+copying part05
+
+1 File submitted: 
+  part05 (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ submit cmps012b-wm.f13 lab5 part0545[K6
+Submitting the files you specified...
+copying part06
+
+1 File submitted: 
+  part06 (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ submit cmps012b-wm.f13 lab5 part06[K[K[K[K[K[Klist2.c
+Submitting the files you specified...
+copying list2\.c
+
+1 File submitted: 
+  list2.c (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi pat0[K[Krt07
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"part07" [noeol] 513L, 28672C[>c[1;1HScript started on Tue 05 Nov 2013 08:49:51 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.[34m^M
+^[[m]0;asilva3@unix1:lab5[34m^G[m[asilva3@unix1 lab5]$ d[34m^H^[[m[Kgdb list2[34m^M^M
+^[[m[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)[34m^M[m
+Copyright (C) 2010 Free Software Foundation, Inc.[34m^M[m
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>[34m^M[m
+This is free software: you are free to change and redistribute it.[34m^M[m
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"[34m^M[m
+and "show warranty" for details.[34m^M[m
+This GDB was configured as "x86_64-redhat-linux-gnu".[34m^M[m
+For bug reporting instructions, please see:[34m^M[m
+<http://www.gnu.org/software/gdb/bugs/>...[34m^M[m
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/liss[14;1Ht2...done.[34m^M[m
+(gdb) break main[34m^M[m
+Breakpoint 1 at 0x4005a4: file list2.c, line 15.[34m^M[m
+(gdb) run foo bar[34m^M[m
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list2  [19;1Hfoo bar[34m^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug"  [21;1Hdoes not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" dd[24;1Hoes not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debugg[27;1H" does not match "/lib64/libm.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug""[30;1H does not match "/lib64/libm.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debugg[33;1H" does not match "/lib64/libc.so.6" (CRC mismatch).[34m^M
+^M[m
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug""[36;1H does not match "/lib64/libc.so.6" (CRC mismatch).[34m^M
+^M
+^M[m
+Breakpoint 1, main (argc=3, argv=0x7fffffffe178) at list2.c:15[34m^M[m
+15[8C for (int argi = 0; argi < 5; ++argi) {[34m^M[m
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86__[42;1H64[34m^M[m[43;64H1,1[11CTop[1;1H[?12l[?25h[?25l[43;64H2[2;1H[?12l[?25h[?25l[43;64H3[3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6[6;1H[?12l[?25h[?25l[43;64H7[7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H9[9;1H[?12l[?25h[?25l[43;64H10,1[10;1H[?12l[?25h[?25l[43;65H1[11;1H[?12l[?25h[?25l[43;65H2[12;1H[?12l[?25h[?25l[43;65H3[13;1H[?12l[?25h[?25l[80Css[14;1Ht
+[46m([mgdb[46m)[m[43;65H4[15;1H[?12l[?25h[?25l(gdb)[43;65H5[16;1H[?12l[?25h[?25l
+[46m([mgdb[46m)[m[43;65H6[17;1H[?12l[?25h[?25l(gdb)[43;65H7[18;1H[?12l[?25h[?25l[43;65H8[20;1H[?12l[?25h[?25l[43;65H9[22;1H[?12l[?25h[?25l[43;64H20[23;1H[?12l[?25h[?25l[43;65H1[25;1H[?12l[?25h[?25l[43;65H2[26;1H[?12l[?25h[?25l[43;65H3[28;1H[?12l[?25h[?25l[43;65H4[29;1H[?12l[?25h[?25l[43;65H5[31;1H[?12l[?25h[?25l[43;65H6[32;1H[?12l[?25h[?25l[43;65H7[34;1H[?12l[?25h[?25l[43;65H8[35;1H[?12l[?25h[?25l[43;65H9[37;1H[?12l[?25h[?25l[43;64H30[38;1H[?12l[?25h[?25l[43;65H1[39;1H[?12l[?25h[?25l[43;65H2[40;1H[?12l[?25h[?25l[43;65H3[41;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m pa[34m^H^[[m[Krint argc[34m^M[m[43;1H[K[43;64H34,1[11C0%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+$1 = 3[34m^M[m[43;64H[K[43;64H35,1[11C0%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m print argv[34m^M[m[43;64H[K[43;64H36,1[11C0%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+$2 = (char **) 0x7fffffffe178[34m^M[m[43;64H[K[43;64H37,1[11C0%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m par[34m^H^[[m[K[34m^H^[[m[Krint argv[0][34m^M[m[43;64H[K[43;64H38,1[11C1%[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[40;1H(gdb)
+$3 = 0x7fffffffe428 "/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/liss[42;1Ht2"[34m^M[m[43;64H[K[43;64H39,1[11C1%[41;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m print argv[1][34m^M[m[43;64H[K[43;64H40,1[11C1%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+$4 = 0x7fffffffe467 "foo"[34m^M[m[43;64H[K[43;64H41,1[11C1%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m print argv[2][34m^M[m[43;64H[K[43;64H42,1[11C2%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+$5 = 0x7fffffffe46b "bar"[34m^M[m[43;64H[K[43;64H43,1[11C2%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m print argv[3][34m^M[m[43;64H[K[43;64H44,1[11C2%[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[40;1H(gdb)
+$6 = 0x0[34m^M[m
+(gdb) print argv [4][34m^H^[[m[K[34m^H^[[m[K[34m^H^[[m[K[34m^H^[[m[K[4][34m^M[m[43;64H[K[43;64H45,1[11C2%[41;1H[?12l[?25h[?25l
+[46m([mgdb[46m)[m[43;65H6[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+$7 = 0x7fffffffe46f "USER=asilva3"[34m^M[m[43;64H[K[43;64H47,1[11C2%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[46m([mgdb[46m)[m print argv[5][34m^M[m[43;64H[K[43;64H48,1[11C3%[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[41;1H(gdb)
+$8 = 0x7fffffffe47c "LOGNAME=asilva3"[34m^M[m[43;64H[K[43;64H49,1[11C3%[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[41;1H[46m([mgdb[46m)[m print argv[6][34m^M[m
+$9 = 0x7fffffffe48c "HOME=/afs/cats.ucsc.edu/users/g/asilva3"[34m^M[m[43;64H[K[43;64H50,1[11C3%[41;1H[?12l[?25h[?25l(gdb)[43;65H1[42;1H[?12l[?25h[?25l[1;42r[1;1H[2M[1;43r[41;1H[46m([mgdb[46m)[m quit[34m^M[m
+A debugging session is active.[34m^M[m[43;64H[K[43;64H52,1[11C3%[41;1H[?12l[?25h[?25l(gdb)[43;65H3[42;1H[?12l[?25h[?25l[1;42r[42;1H
+[1;43r[42;1H[34m^M[m[43;64H[K[43;64H54,1[11C3%[42;1H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ sub[K[K[Kvi part07[23Gsubmit cmps012b-wm.f13 lab5 list2.c[51Gpart06[K[51Glist2.c[23Gvi part07[K[23G[Kvi part07[23Gsubmit cmps012b-wm.f13 lab5 list2.c[51Gpart06[K[K7
+Submitting the files you specified...
+copying part07
+
+1 File submitted: 
+  part07 (revision 1)
+
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list3.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list3.c" 27L, 635C[>c[1;1H[34m// $Id: list3.c,v 1.1 2013-11-05 20:54:10-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[16;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[17;6H assert (node != [31mNULL[m);[18;6H node->word = argv[argi];[19;6H node->link = head;[20;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[23;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[24;14H curr, curr->word, curr->word, curr->link);
+   }
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [29;1H~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H1,1[11CAll[1;1H[?12l[?25h[?25l[43;64H2,0-1[2;1H[?12l[?25h[?25l[43;64H3,1  [3;1H[?12l[?25h[?25l[43;64H4[4;1H[?12l[?25h[?25l[43;64H5[5;1H[?12l[?25h[?25l[43;64H6,0-1[6;1H[?12l[?25h[?25l[43;64H7,1  [7;1H[?12l[?25h[?25l[43;64H8[8;1H[?12l[?25h[?25l[43;64H9[9;1H[?12l[?25h[?25l[43;64H10,1[10;1H[?12l[?25h[?25l[8;13H[46m{
+
+
+}[m[43;65H1[11;1H[?12l[?25h[?25l[8;13H{
+
+
+}[43;65H2,0-1[12;1H[?12l[?25h[?25l[43;65H3,1  [13;1H[?12l[?25h[?25l[43;65H4[14;1H[?12l[?25h[?25l[43;65H5[15;1H[?12l[?25h[?25l[43;65H6[16;1H[?12l[?25h[?25l[43;65H7[17;1H[?12l[?25h[?25l[43;65H8[18;1H[?12l[?25h[?25l[43;65H9[19;1H[?12l[?25h[?25l[43;64H20[20;1H[?12l[?25h[?25l[43;65H1[21;1H[?12l[?25h[?25l[43;65H2[22;1H[?12l[?25h[?25l[43;65H3[23;1H[?12l[?25h[?25l[43;65H4[24;1H[?12l[?25h[?25l[43;65H5[25;1H[?12l[?25h[?25l[43;65H4[24;1H[?12l[?25h[?25l[43;65H5[25;1H[?12l[?25h[?25l[43;67H2[25;2H[?12l[?25h[?25l[43;65H6[26;2H[?12l[?25h[?25l[43;67H3[26;3H[?12l[?25h[?25l[43;65H5[25;3H[?12l[?25h[?25l[22;67H[46m{[25;4H}[m[43;67H4[25;4H[?12l[?25h[?25l[43;1H[1m-- INSERT --[m[43;13H[K[43;64H25,4[10CAll[25;4H[?12l[?25h[?25l[43;67H5[25;5H[?12l[?25h[?25l[26;42r[26;1H[L[1;43r[43;64H[K[43;64H26,1[10CAll[22;67H{[25;4H}
+[?12l[?25h[?25l[43;67H2[26;2H[?12l[?25h[?25l[43;67H3[26;3H[?12l[?25h[?25l[43;67H4[26;4H[?12l[?25h[?25l f[43;67H5[26;5H[?12l[?25h[?25lfr[43;67H6[26;6H[?12l[?25h[?25lre[43;67H7[26;7H[?12l[?25h[?25lee[43;67H8[26;8H[?12l[?25h[?25le(
+
+[1m[37m[41m}[m[43;67H9[26;9H[?12l[?25h[?25l(c[43;67H10[26;10H[?12l[?25h[?25lcu[43;68H1[26;11H[?12l[?25h[?25lur[43;68H2[26;12H[?12l[?25h[?25lrr[43;68H3[26;13H[?12l[?25h[?25lr)
+
+}[26;8H[46m([mcurr[46m)[m[43;68H4[26;14H[?12l[?25h[?25l[46m)[m;[26;8H(curr)[43;68H5[26;15H[?12l[?25h[43;1H[K[26;14H[?25l[43;64H26,14[9CAll[26;14H[?12l[?25h[?25l[43;64H[K[43;1H:[?12l[?25hx[?25l[?12l[?25h[?25l"list3.c" 28L, 650C written
+[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list3.c[23Gsubmit cmps012b-wm.f13 lab5 part07[23G[25Pvi[32G[23G[25@submit cmps012b-wm.f13 lab5[57G[23Gvi list3.c[K[23G[Kmk list3
+mk: list3: is not a C source file
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ vi list3.c
+[?1049h[?1h=[1;43r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[43;1H"list3.c" 28L, 650C[>c[1;1H[34m// $Id: list3.c,v 1.1 2013-11-05 20:54:10-08 - - $[m
+
+[35m#include [m[31m<assert.h>[m
+[35m#include [m[31m<stdio.h>[m
+[35m#include [m[31m<stdlib.h>[m
+
+[32mtypedef[m [32mstruct[m node node;
+[32mstruct[m node {
+   [32mchar[m *word;
+   node *link;
+};
+
+[32mint[m main ([32mint[m argc, [32mchar[m **argv) {
+   node *head;
+   [33mfor[m ([32mint[m argi = [31m0[m; argi < [31m5[m; ++argi) {[16;6H node *node = malloc ([33msizeof[m ([32mstruct[m node));[17;6H assert (node != [31mNULL[m);[18;6H node->word = argv[argi];[19;6H node->link = head;[20;6H head = node;
+   }
+   [33mfor[m (node *curr = head; curr->link != [31mNULL[m; curr = curr->link) {[23;6H printf ([31m"[m[35m%p[m[31m->node {word=[m[35m%p[m[31m->[[m[35m%s[m[31m], link=[m[35m%p[m[31m}[m[35m\n[m[31m"[m,[24;14H curr, curr->word, curr->word, curr->link);
+   }
+   free(curr);
+   [33mreturn[m [31m9[m;
+}
+[1m[34m~                                                                                [30;1H~                                                                                [31;1H~                                                                                [32;1H~                                                                                [33;1H~                                                                                [34;1H~                                                                                [35;1H~                                                                                [36;1H~                                                                                [37;1H~                                                                                [38;1H~                                                                                [39;1H~                                                                                [40;1H~                                                                                [41;1H~                                                                                [42;1H~                                                                                [m[43;64H26,4[10CAll[26;4H[?12l[?25h[?25l[43;1H[K[43;1H:[?12l[?25hq[?25l[?12l[?25h[?25l[43;1H[K[43;1H[?1l>[?12l[?25h[?1049l]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list3.c
+CSOURCE=list3.c EXECBIN=list3
++ cid + list3.c
++ checksource list3.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list3.c -o list3 -lm
+list3.c: In function ‘main’:
+list3.c:26: error: ‘curr’ undeclared (first use in this function)
+list3.c:26: error: (Each undeclared identifier is reported only once
+list3.c:26: error: for each function it appears in.)
+list3.c:13: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ valgrind uni[K[K[Klist3
+==4286== Memcheck, a memory error detector
+==4286== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==4286== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==4286== Command: list3
+==4286== 
+0x4c27180->node {word=0x7ff000456->[HOME=/afs/cats.ucsc.edu/users/g/asilva3], link=0x4c27130}
+0x4c27130->node {word=0x7ff000446->[LOGNAME=asilva3], link=0x4c270e0}
+0x4c270e0->node {word=0x7ff000439->[USER=asilva3], link=0x4c27090}
+0x4c27090->node {word=(nil)->[(null)], link=0x4c27040}
+==4286== Conditional jump or move depends on uninitialised value(s)
+==4286==    at 0x400663: main (list3.c:22)
+==4286== 
+==4286== Conditional jump or move depends on uninitialised value(s)
+==4286==    at 0x3710E45948: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+==4286== 
+==4286== Use of uninitialised value of size 8
+==4286==    at 0x3710E43D01: _itoa_word (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E46912: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+==4286== 
+==4286== Conditional jump or move depends on uninitialised value(s)
+==4286==    at 0x3710E43D08: _itoa_word (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E46912: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+==4286== 
+==4286== Conditional jump or move depends on uninitialised value(s)
+==4286==    at 0x3710E4697D: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+==4286== 
+==4286== Conditional jump or move depends on uninitialised value(s)
+==4286==    at 0x3710E45385: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+==4286== 
+==4286== Conditional jump or move depends on uninitialised value(s)
+==4286==    at 0x3710E453FD: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+==4286== 
+0x4c27040->node {word=0x7ff000433->[list3], link=0x3710e0fb88}
+==4286== Use of uninitialised value of size 8
+==4286==    at 0x40065C: main (list3.c:22)
+==4286== 
+==4286== Use of uninitialised value of size 8
+==4286==    at 0x40061E: main (list3.c:23)
+==4286== 
+==4286== Use of uninitialised value of size 8
+==4286==    at 0x400626: main (list3.c:23)
+==4286== 
+==4286== Use of uninitialised value of size 8
+==4286==    at 0x40062D: main (list3.c:23)
+==4286== 
+==4286== Invalid read of size 1
+==4286==    at 0x3710E480EC: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+==4286==  Address 0xc0012000029d5 is not stack'd, malloc'd or (recently) free'd
+==4286== 
+==4286== 
+==4286== Process terminating with default action of signal 11 (SIGSEGV)
+==4286==  General Protection Fault
+==4286==    at 0x3710E480EC: vfprintf (in /lib64/libc-2.12.so)
+==4286==    by 0x3710E4F449: printf (in /lib64/libc-2.12.so)
+==4286==    by 0x40064B: main (list3.c:23)
+0x3710e0fb88->node {word=0xc0012000029d5->[==4286== 
+==4286== HEAP SUMMARY:
+==4286==     in use at exit: 80 bytes in 5 blocks
+==4286==   total heap usage: 5 allocs, 0 frees, 80 bytes allocated
+==4286== 
+==4286== LEAK SUMMARY:
+==4286==    definitely lost: 0 bytes in 0 blocks
+==4286==    indirectly lost: 0 bytes in 0 blocks
+==4286==      possibly lost: 0 bytes in 0 blocks
+==4286==    still reachable: 80 bytes in 5 blocks
+==4286==         suppressed: 0 bytes in 0 blocks
+==4286== Rerun with --leak-check=full to see details of leaked memory
+==4286== 
+==4286== For counts of detected and suppressed errors, rerun with: -v
+==4286== Use --track-origins=yes to see where uninitialised values come from
+==4286== ERROR SUMMARY: 54 errors from 12 contexts (suppressed: 6 from 6)
+Segmentation fault (core dumped)
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ echo [K[K[K[Kgdb list2[K3
+[?1034hGNU gdb (GDB) Red Hat Enterprise Linux (7.2-60.el6_4.1)
+Copyright (C) 2010 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3...done.
+(gdb) run
+Starting program: /afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3 
+warning: the debug information found in "/usr/lib/debug//lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/ld-2.12.so.debug" does not match "/lib64/ld-linux-x86-64.so.2" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libm-2.12.so.debug" does not match "/lib64/libm.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug//lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+warning: the debug information found in "/usr/lib/debug/lib64/libc-2.12.so.debug" does not match "/lib64/libc.so.6" (CRC mismatch).
+
+0x601090->node {word=0x7fffffffe437->[HOME=/afs/cats.ucsc.edu/users/g/asilva3], link=0x601070}
+0x601070->node {word=0x7fffffffe427->[LOGNAME=asilva3], link=0x601050}
+0x601050->node {word=0x7fffffffe41a->[USER=asilva3], link=0x601030}
+0x601030->node {word=(nil)->[(null)], link=0x601010}
+0x601010->node {word=0x7fffffffe3db->[/afs/cats.ucsc.edu/users/g/asilva3/private/cmps012b/lab5/list3], link=0x3710e0fb88}
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+Missing separate debuginfos, use: debuginfo-install glibc-2.12-1.107.el6_4.4.x86_64
+(gdb) where
+#0  0x0000003710e480ec in vfprintf () from /lib64/libc.so.6
+#1  0x0000003710e4f44a in printf () from /lib64/libc.so.6
+#2  0x000000000040064c in main (argc=1, argv=0x7fffffffe138) at list3.c:23
+(gdb) list
+warning: Source file is more recent than executable.
+6	
+7	typedef 

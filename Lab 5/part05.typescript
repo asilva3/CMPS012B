@@ -1,0 +1,17 @@
+Script started on Tue 05 Nov 2013 08:40:33 PM PST
+You are currently using 5% (22.9 MiB) of your 488.3 MiB quota.
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ mk list1.c
+CSOURCE=list1.c EXECBIN=list1
++ cid + list1.c
++ checksource list1.c
++ gcc -g -O0 -Wall -Wextra -std=gnu99 list1.c -o list1 -lm
+list1.c: In function ‘main’:
+list1.c:14: warning: implicit declaration of function ‘malloc’
+list1.c:14: warning: incompatible implicit declaration of built-in function ‘malloc’
+list1.c:11: warning: unused parameter ‘argc’
++ set +x
+============================================================
+]0;asilva3@unix1:lab5[asilva3@unix1 lab5]$ exit
+exit
+
+Script done on Tue 05 Nov 2013 08:40:46 PM PST
