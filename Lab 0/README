@@ -1,0 +1,8 @@
+
+Yes, it is OK if you copy these files for this trivial
+assignment.  Not everyone will notice this hidden directory.  It
+does not show up from a browser or with ls without the -a
+option.  Just another advantange of using the Unix command line
+directly without wasting time with that pointy clicky nonsense.
+
+$Id: README,v 1.1 2013-10-06 17:02:43-07 - - $
