@@ -1,0 +1,6 @@
+In this lab, you will be introduced to ANSI C11 and make use of a stack data
+structure implemented as an array. Input will be read using scanf(1) and output
+printed with printf(1). The program will implement a Reverse Polish notation
+calculator.
+
+To compile run mk file, then crpn. For use of the program read the pdf.
