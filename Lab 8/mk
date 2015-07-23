@@ -1,0 +1,4 @@
+#!/bin/sh
+cid + l8stat.c
+
+gcc -g -o0 -Wall -Wextra -std=gnu99 l8stat.c -o l8stat
